@@ -1,5 +1,6 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 import { User as GraphqlUser, UserType } from '../graphql/schema.types'
+import 
 
 @Entity()
 export class User extends BaseEntity implements GraphqlUser {
@@ -29,4 +30,10 @@ export class User extends BaseEntity implements GraphqlUser {
     nullable: true,
   })
   name: string
+
+  @OneToMany(() => Post, post => post.owner, { eager: true })
+  posts: Post[]
+
+  @ManyToMany(() => Post, post => post.members)
+  memberPost: Post[]
 }
