@@ -15,6 +15,7 @@ export function Dashboard(props: DashboardProps) {
     <Page>
       <Hero>
         <Button>My Orders</Button>
+        <Spacer $w2 />
         <Button>Other Orders</Button>
       </Hero>
       <Content>
@@ -23,7 +24,7 @@ export function Dashboard(props: DashboardProps) {
             <Order
               name="Param Shah"
               goal={150}
-              fulfilled={20}
+              fulfilled={40}
               description="I want to buy some leggings"
               title="Lululemon Leggings"
             />
@@ -33,7 +34,7 @@ export function Dashboard(props: DashboardProps) {
             <Order
               name="Param Shah"
               goal={150}
-              fulfilled={20}
+              fulfilled={40}
               description="I want to buy some leggings"
               title="Lululemon Leggings"
             />
@@ -44,7 +45,7 @@ export function Dashboard(props: DashboardProps) {
             <Order
               name="Param Shah"
               goal={150}
-              fulfilled={20}
+              fulfilled={40}
               description="I want to buy some leggings"
               title="Lululemon Leggings"
             />
@@ -54,7 +55,7 @@ export function Dashboard(props: DashboardProps) {
             <Order
               name="Param Shah"
               goal={150}
-              fulfilled={20}
+              fulfilled={40}
               description="I want to buy some leggings"
               title="Lululemon Leggings"
             />
@@ -73,7 +74,7 @@ const Content = style('div', 'flex-l')
 
 const LContent = style('div', 'flex-grow-0 w-70-l mr4-l')
 
-const RContent = style('div', 'flex-grow-0  w-30-l', { minWidth: 'max-content' })
+const RContent = style('div', 'flex-grow-0 w-70-l mr4-l')
 
 const Section = style('div', 'mb4 mid-gray ba b--mid-gray br2 pa3', (p: { $color?: ColorName }) => ({
   borderLeftColor: Colors[p.$color || 'lemon'] + '!important',

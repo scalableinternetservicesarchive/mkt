@@ -1,5 +1,6 @@
 import { RouteComponentProps } from '@reach/router'
 import React from 'react'
+import { PieChart } from 'react-minimal-pie-chart'
 import { H3, H5 } from '../../style/header'
 import { Spacer } from '../../style/spacer'
 import { style } from '../../style/styled'
@@ -18,6 +19,7 @@ interface OrderProps extends RouteComponentProps, AppRouteParams {}
 
 export function Order(props: OrderProps & Props) {
   const { title, name, description, fulfilled, goal } = props
+  // const percentage = (fulfilled / goal) * 100
   return (
     <Content>
       <UserWidget name={name} />
@@ -28,9 +30,20 @@ export function Order(props: OrderProps & Props) {
         <H5>{description}</H5>
       </LContent>
       <Spacer $w6 />
-      <H3>
+      <PieChart
+        data={[
+          { title: `Fulfilled: $${fulfilled}`, value: fulfilled, color: '#E38627' },
+          { title: `Goal: $${goal}`, value: goal - fulfilled, color: '#bfbfbf' },
+        ]}
+        // reveal={percentage}
+        startAngle={-90}
+        radius={30}
+        lineWidth={30}
+        paddingAngle={5}
+      />
+      {/* <H3>
         ${fulfilled}/${goal}
-      </H3>
+      </H3> */}
     </Content>
   )
 }
