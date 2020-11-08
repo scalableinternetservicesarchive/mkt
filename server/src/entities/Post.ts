@@ -7,7 +7,7 @@ import {
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm'
 import { User } from './User'
 
@@ -36,6 +36,6 @@ export class Post extends BaseEntity {
   owner: User
 
   @ManyToMany(() => User, user => user.memberPosts)
-  @JoinTable
+  @JoinTable()
   members: User[]
 }

@@ -5,7 +5,6 @@ export const fetchUser = gql`
     self {
       id
       name
-      userType
     }
   }
 `
