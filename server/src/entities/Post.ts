@@ -1,4 +1,15 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from 'typeorm'
+import { User } from './User'
 
 @Entity()
 export class Post extends BaseEntity {
@@ -12,12 +23,12 @@ export class Post extends BaseEntity {
   timeUpdated: Date
 
   @Column({
-    length: 100
+    length: 100,
   })
   title: string
 
   @Column({
-    length: 288
+    length: 288,
   })
   description: string
 
