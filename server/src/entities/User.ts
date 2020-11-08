@@ -6,13 +6,14 @@ import {
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm'
-import { User as GraphqlUser, UserType } from '../graphql/schema.types'
+import { User as GraphqlUser } from '../graphql/schema.types'
 import { Post } from './Post'
 
 @Entity()
 export class User extends BaseEntity implements GraphqlUser {
+  __typename?: 'User' | undefined
   @PrimaryGeneratedColumn()
   id: number
 
@@ -28,13 +29,6 @@ export class User extends BaseEntity implements GraphqlUser {
   email: string
 
   @Column({
-    type: 'enum',
-    enum: UserType,
-    default: UserType.User,
-  })
-  userType: UserType
-
-  @Column({
     length: 100,
     nullable: true,
   })
@@ -44,5 +38,5 @@ export class User extends BaseEntity implements GraphqlUser {
   posts: Post[]
 
   @ManyToMany(() => Post, post => post.members)
-  memberPost: Post[]
+  memberPosts: Post[]
 }
