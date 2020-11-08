@@ -1,7 +1,7 @@
 import React from 'react'
 import { style } from '../../style/styled'
 
-export function UserWidget(props: { name: string; small: boolean }) {
+export function UserWidget(props: { name: string; small?: boolean }) {
   const { name, small } = props
   return (
     <>
