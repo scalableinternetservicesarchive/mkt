@@ -9,11 +9,9 @@ import { FetchUserContext } from '../graphql/query.gen'
 import { style } from '../style/styled'
 import { fetchUser } from './auth/fetchUser'
 import { UserContext, UserCtx } from './auth/user'
+import { NavBar } from './nav/NavBar'
 import { Route } from './nav/route'
-import { HomePage } from './page/HomePage'
-import { LecturesPage } from './page/LecturesPage'
-import { PlaygroundPage } from './page/PlaygroundPage'
-import { ProjectsPage } from './page/ProjectsPage'
+import { Dashboard } from './page/Dashboard'
 
 const Styletron = require('styletron-engine-monolithic')
 
@@ -48,20 +46,22 @@ export function App() {
 
 export function AppBody() {
   return (
-    <>
-      <Router className={bodyClass}>
+    <div className={bodyClass}>
+      <NavBar />
+      <Router>
         <Redirect noThrow from="app" to="index" />
-        <Redirect noThrow from="app/playground" to="surveys" />
-        <HomePage path={Route.HOME} />
-        <LecturesPage path={Route.LECTURES} />
-        <ProjectsPage path={Route.PROJECTS} />
-        <PlaygroundPage path={Route.PLAYGROUND} />
-        <PlaygroundPage path={Route.PLAYGROUND_APP} />
+        <Dashboard path={Route.DASHBOARD} />
+        {/* <Redirect noThrow from="app/playground" to="surveys" /> */}
+        {/* <HomePage path={Route.HOME} /> */}
+        {/* <LecturesPage path={Route.LECTURES} /> */}
+        {/* <ProjectsPage path={Route.PROJECTS} /> */}
+        {/* <PlaygroundPage path={Route.PLAYGROUND} /> */}
+        {/* <PlaygroundPage path={Route.PLAYGROUND_APP} /> */}
       </Router>
       <Footer>
         <FooterText>© 2020 John Rothfels</FooterText>
       </Footer>
-    </>
+    </div>
   )
 }
 
