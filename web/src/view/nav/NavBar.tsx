@@ -12,23 +12,15 @@ import { link } from './Link'
 import { getLoginPath, getPath, getSurveyPath, Route } from './route'
 
 const title = {
-  name: 'CS188',
+  name: 'MKT',
   path: getPath(Route.HOME),
   title: true,
 }
 
 const otherTabs = [
   {
-    name: 'lectures',
-    path: getPath(Route.LECTURES),
-  },
-  {
-    name: 'projects',
-    path: getPath(Route.PROJECTS),
-  },
-  {
-    name: 'playground',
-    path: getPath(Route.PLAYGROUND),
+    name: 'profile',
+    path: getPath(Route.PROFILE),
   },
 ]
 
