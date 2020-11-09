@@ -39,8 +39,9 @@ type Post {
   id: Int!
   title: String!
   description: String!
+  totalCommitted: Int!
   owner: User!
-  members: [User!]!
+  commits: [Postcommit!]!
 }
 
 type User {
@@ -48,7 +49,16 @@ type User {
   email: String!
   name: String!
   posts: [Post!]!
-  memberPosts: [Post!]!
+  commits: [PostCommit!]!
+  merchant: String!
+  category: Category!
+}
+
+type Postcommit {
+  id: Int!
+  amount: Int!
+  post: Post!
+  user: User!
 }
 
 type Survey {
