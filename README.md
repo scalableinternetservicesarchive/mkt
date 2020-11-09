@@ -2,5 +2,10 @@
 
 ## Group members
 
-Edward Zhang
+Ryan Lauri
+
 Srivishnu Ramamurthi
+
+Param Shah
+
+Edward Zhang
