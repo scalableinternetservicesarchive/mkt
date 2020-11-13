@@ -73,6 +73,16 @@ export enum UserType {
   User = 'USER',
 }
 
+// not sure if category desired or not?
+// Would need to be split into separate entity if used for filtering
+export enum Category {
+  CLOTHING = 'Clothing',
+  GROCERIES = 'Groceries',
+  FOOD = 'Food',
+  HOUSEWARES = 'Housewares',
+  ALCOHOL = 'Alcohol',
+}
+
 export interface Survey {
   __typename?: 'Survey'
   id: Scalars['Int']

@@ -1,1 +1,1 @@
--- insert into `post` (`title`, `description`) values ('LuluLemon Leggings', 'Great leggings');
+-- insert into `post` (`title`, `description`, 'merchant', 'totalCommitted', 'category') values ('LuluLemon Leggings', 'Great leggings');

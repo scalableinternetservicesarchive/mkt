@@ -8,21 +8,12 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm'
+import { Category, Post as GraphqlPost } from '../graphql/schema.types'
 import { PostCommit } from './PostCommit'
 import { User } from './User'
 
-// not sure if category desired or not?
-// Would need to be split into separate entity if used for filtering
-export enum Category {
-  CLOTHING = 'Clothing',
-  GROCERIES = 'Groceries',
-  FOOD = 'Food',
-  HOUSEWARES = 'Housewares',
-  ALCOHOL = 'Alcohol',
-}
-
 @Entity()
-export class Post extends BaseEntity {
+export class Post extends BaseEntity implements GraphqlPost {
   @PrimaryGeneratedColumn()
   id: number
 
