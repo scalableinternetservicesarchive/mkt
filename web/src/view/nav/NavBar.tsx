@@ -1,18 +1,19 @@
 import { Link } from '@reach/router'
-import React from 'react'
+import * as React from 'react'
+import { useContext } from 'react'
 import { style } from '../../style/styled'
+import { UserContext } from '../auth/user'
 import { UserWidget } from '../components/UserWidget'
 
 export function NavBar() {
+  const { user } = useContext(UserContext)
   return (
-    <>
-      <NavBarStyle>
-        <Link to="/app/index" style={{ textDecorationLine: 'none' }}>
-          Marketplace
-        </Link>
-        <UserWidget name="your name" small />
-      </NavBarStyle>
-    </>
+    <NavBarStyle>
+      <Link to="/app/index" style={{ textDecorationLine: 'none' }}>
+        Marketplace
+      </Link>
+      {user ? <UserWidget name={user?.name} small /> : <Link to="/app/login">Login</Link>}
+    </NavBarStyle>
   )
 }
 
