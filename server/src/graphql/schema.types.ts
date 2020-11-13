@@ -68,6 +68,11 @@ export interface User {
   posts: Array<Post>
 }
 
+export enum UserType {
+  Admin = 'ADMIN',
+  User = 'USER',
+}
+
 export interface Survey {
   __typename?: 'Survey'
   id: Scalars['Int']

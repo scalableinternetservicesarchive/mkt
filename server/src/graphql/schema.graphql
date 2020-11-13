@@ -50,6 +50,7 @@ type User {
   name: String!
   posts: [Post!]!
   commits: [PostCommit!]!
+  userType: UserType!
   merchant: String!
   category: String!
 }
