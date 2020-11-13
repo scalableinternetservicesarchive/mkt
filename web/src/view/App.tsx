@@ -1,5 +1,5 @@
 import { ApolloProvider, useQuery } from '@apollo/client'
-import { Redirect, Router } from '@reach/router'
+import { Router } from '@reach/router'
 import * as React from 'react'
 import { hydrate, render } from 'react-dom'
 import { Provider as StyletronProvider } from 'styletron-react'
@@ -10,10 +10,7 @@ import { style } from '../style/styled'
 import { fetchUser } from './auth/fetchUser'
 import { UserContext, UserCtx } from './auth/user'
 import { Route } from './nav/route'
-import { HomePage } from './page/HomePage'
-import { LecturesPage } from './page/LecturesPage'
-import { PlaygroundPage } from './page/PlaygroundPage'
-import { ProjectsPage } from './page/ProjectsPage'
+import { Dashboard } from './page/Dashboard'
 
 const Styletron = require('styletron-engine-monolithic')
 
@@ -50,16 +47,10 @@ export function AppBody() {
   return (
     <>
       <Router className={bodyClass}>
-        <Redirect noThrow from="app" to="index" />
-        <Redirect noThrow from="app/playground" to="surveys" />
-        <HomePage path={Route.HOME} />
-        <LecturesPage path={Route.LECTURES} />
-        <ProjectsPage path={Route.PROJECTS} />
-        <PlaygroundPage path={Route.PLAYGROUND} />
-        <PlaygroundPage path={Route.PLAYGROUND_APP} />
+        <Dashboard path={Route.HOME} />
       </Router>
       <Footer>
-        <FooterText>© 2020 John Rothfels</FooterText>
+        <FooterText>© 2020 MKT</FooterText>
       </Footer>
     </>
   )

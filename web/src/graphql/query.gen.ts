@@ -11,7 +11,6 @@ export interface FetchUserContext_self {
   __typename: "User";
   id: number;
   name: string;
-  userType: UserType;
 }
 
 export interface FetchUserContext {
@@ -248,11 +247,6 @@ export interface SurveyQuestion {
 //==============================================================
 // START Enums and Input Objects
 //==============================================================
-
-export enum UserType {
-  ADMIN = "ADMIN",
-  USER = "USER",
-}
 
 export interface SurveyInput {
   questionId: number;

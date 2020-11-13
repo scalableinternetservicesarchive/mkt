@@ -1,5 +1,5 @@
 import { RouteComponentProps } from '@reach/router'
-import React from 'react'
+import * as React from 'react'
 import { PieChart } from 'react-minimal-pie-chart'
 import { H3, H5 } from '../../style/header'
 import { Spacer } from '../../style/spacer'
@@ -15,7 +15,7 @@ interface Props {
   fulfilled: number
 }
 
-interface OrderProps extends RouteComponentProps, AppRouteParams {}
+interface OrderProps extends RouteComponentProps, AppRouteParams { }
 
 export function Order(props: OrderProps & Props) {
   const { title, name, description, fulfilled, goal } = props
