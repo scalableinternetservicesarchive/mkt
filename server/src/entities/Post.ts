@@ -6,7 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm'
 import { PostCommit } from './PostCommit'
 import { User } from './User'
@@ -14,11 +14,11 @@ import { User } from './User'
 // not sure if category desired or not?
 // Would need to be split into separate entity if used for filtering
 export enum Category {
-  CLOTHING = "Clothing",
-  GROCERIES = "Groceries",
-  FOOD = "Food",
-  HOUSEWARES = "Housewares",
-  ALCOHOL = "Alcohol"
+  CLOTHING = 'Clothing',
+  GROCERIES = 'Groceries',
+  FOOD = 'Food',
+  HOUSEWARES = 'Housewares',
+  ALCOHOL = 'Alcohol',
 }
 
 @Entity()
@@ -34,32 +34,31 @@ export class Post extends BaseEntity {
 
   @Column({
     length: 100,
-    type: "char"
+    type: 'char',
   })
   title: string
 
   @Column({
-    length: 288,
-    type: "char"
+    type: 'text',
   })
   description: string
 
   // Would also be split into separate entity if filtering added
   @Column({
     length: 100,
-    type: "char"
+    type: 'char',
   })
   merchant: string
 
   @Column({
-    unsigned: true
+    unsigned: true,
   })
   totalCommitted: number
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: Category,
-    default: Category.HOUSEWARES
+    default: Category.HOUSEWARES,
   })
   category: Category
 
@@ -73,7 +72,7 @@ export class Post extends BaseEntity {
   // members: User[]
 
   @OneToMany(() => PostCommit, commit => commit, {
-    eager: true
+    eager: true,
   })
   commits: PostCommit[]
 }

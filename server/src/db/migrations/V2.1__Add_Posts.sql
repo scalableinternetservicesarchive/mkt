@@ -1,1 +1,1 @@
-insert into `post` (`title`, `description`) values ('LuluLemon Leggings', 'Great leggings');
+-- insert into `post` (`title`, `description`) values ('LuluLemon Leggings', 'Great leggings');

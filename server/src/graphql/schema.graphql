@@ -41,7 +41,7 @@ type Post {
   description: String!
   totalCommitted: Int!
   owner: User!
-  commits: [Postcommit!]!
+  commits: [PostCommit!]!
 }
 
 type User {
@@ -51,10 +51,10 @@ type User {
   posts: [Post!]!
   commits: [PostCommit!]!
   merchant: String!
-  category: Category!
+  category: String!
 }
 
-type Postcommit {
+type PostCommit {
   id: Int!
   amount: Int!
   post: Post!
