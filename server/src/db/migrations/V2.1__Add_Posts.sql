@@ -1,3 +1,2 @@
-insert into `post` (`title`, `description`, `merchant`, `totalCommitted`, `category`, `ownerId`) values ('LuluLemon Leggings', 'Great leggings', 'LuluLemon', 2, 'Clothing', 2);
-
-
+insert into `post` (`title`, `description`, `merchant`, `totalCommitted`, `category`, `ownerId`) values ('LuluLemon Leggings', 'Great leggings', 'LuluLemon', 20, 'Clothing', 2);
+insert into `post` (`title`, `description`, `merchant`, `totalCommitted`, `category`, `ownerId`) values ('Prestige Vodka', 'Get fucked up for cheap', 'Prestige', 20, 'Alcohol', 3);
