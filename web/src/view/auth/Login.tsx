@@ -5,6 +5,7 @@ import { check } from '../../../../common/src/util'
 import { Button } from '../../style/button'
 import { Input } from '../../style/input'
 import { Spacer } from '../../style/spacer'
+import { Page } from '../page/Page'
 import { handleError } from '../toast/error'
 import { toastErr } from '../toast/toast'
 import { UserContext } from './user'
@@ -46,7 +47,7 @@ export function Login(props: RouteComponentProps) {
   }
 
   return (
-    <>
+    <Page>
       <div className="mt3">
         <label className="db fw4 lh-copy f6" htmlFor="email">
           Email address
@@ -62,7 +63,7 @@ export function Login(props: RouteComponentProps) {
       <div className="mt3">
         <Button onClick={login}>Sign Up</Button>
       </div>
-    </>
+    </Page>
   )
 }
 
