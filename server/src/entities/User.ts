@@ -27,27 +27,24 @@ export class User extends BaseEntity implements GraphqlUser {
     length: 100,
     unique: true,
     nullable: false,
-    type: "char"
+    type: 'char',
   })
   email: string
 
   @Column({
     length: 100,
     nullable: false, // shouldn't be NULL?
-    type: "char"
+    type: 'char',
   })
   name: string
 
   @OneToMany(() => Post, post => post.owner, {
-    eager: true
+    eager: true,
   })
   posts: Post[]
 
-  // @ManyToMany(() => Post, post => post.members)
-  // memberPosts: Post[]
-
   @OneToMany(() => PostCommit, commit => commit.user, {
-    eager: true
+    eager: true,
   })
   commits: PostCommit[]
 }

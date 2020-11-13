@@ -8,6 +8,7 @@ import { getApolloClient } from '../graphql/apolloClient'
 import { FetchUserContext } from '../graphql/query.gen'
 import { style } from '../style/styled'
 import { fetchUser } from './auth/fetchUser'
+import { Login } from './auth/Login'
 import { UserContext, UserCtx } from './auth/user'
 import { Route } from './nav/route'
 import { Dashboard } from './page/Dashboard'
@@ -48,6 +49,7 @@ export function AppBody() {
     <>
       <Router className={bodyClass}>
         <Dashboard path={Route.HOME} />
+        <Login path={'app/login'} />
       </Router>
       <Footer>
         <FooterText>© 2020 MKT</FooterText>

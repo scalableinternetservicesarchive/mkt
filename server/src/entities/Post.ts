@@ -6,7 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm'
 import { PostCommit } from './PostCommit'
 import { User } from './User'
@@ -65,13 +65,7 @@ export class Post extends BaseEntity {
   @ManyToOne(() => User, user => user.posts)
   owner: User
 
-  // @ManyToMany(() => User, user => user.memberPosts, {
-  //   eager: false
-  // })
-  // @JoinTable()
-  // members: User[]
-
-  @OneToMany(() => PostCommit, commit => commit, {
+  @OneToMany(() => PostCommit, commit => commit.post, {
     eager: true,
   })
   commits: PostCommit[]

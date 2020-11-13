@@ -1,3 +1,4 @@
+import { RouteComponentProps } from '@reach/router'
 import * as React from 'react'
 import { useContext, useEffect, useState } from 'react'
 import { check } from '../../../../common/src/util'
@@ -8,7 +9,7 @@ import { handleError } from '../toast/error'
 import { toastErr } from '../toast/toast'
 import { UserContext } from './user'
 
-export function Login() {
+export function Login(props: RouteComponentProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [err, setError] = useState({ email: false, password: false })
