@@ -5,7 +5,7 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm'
 import { User as GraphqlUser } from '../graphql/schema.types'
 import { Post } from './Post'
