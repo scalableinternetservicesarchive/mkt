@@ -49,7 +49,7 @@ export function AppBody() {
     <>
       <Router className={bodyClass}>
         <Dashboard path={Route.HOME} />
-        <Login path={'app/login'} />
+        <Login path={Route.LOGIN} />
       </Router>
       <Footer>
         <FooterText>© 2020 MKT</FooterText>
