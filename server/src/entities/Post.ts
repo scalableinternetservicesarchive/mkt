@@ -6,7 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm'
 import { Category, Post as GraphqlPost } from '../graphql/schema.types'
 import { PostCommit } from './PostCommit'
@@ -49,11 +49,13 @@ export class Post extends BaseEntity implements GraphqlPost {
   @Column({
     type: 'enum',
     enum: Category,
-    default: Category.HOUSEWARES,
+    default: Category.Housewares,
   })
   category: Category
 
-  @ManyToOne(() => User, user => user.posts)
+  @ManyToOne(() => User, user => user.posts, {
+    eager: true,
+  })
   owner: User
 
   @OneToMany(() => PostCommit, commit => commit.post, {

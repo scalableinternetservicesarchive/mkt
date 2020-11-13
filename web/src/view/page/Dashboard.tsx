@@ -1,15 +1,21 @@
+import { useQuery } from '@apollo/client'
 import { RouteComponentProps } from '@reach/router'
 import * as React from 'react'
+import { FetchPosts } from '../../graphql/query.gen'
 import { Button } from '../../style/button'
 import { Spacer } from '../../style/spacer'
 import { style } from '../../style/styled'
 import { Order } from '../components/Order'
 import { AppRouteParams } from '../nav/route'
+import { fetchPosts } from './fetchPosts'
 import { Page } from './Page'
 
 interface DashboardProps extends RouteComponentProps, AppRouteParams {}
 
-export function Dashboard(props: DashboardProps) {
+export function Dashboard(_: DashboardProps) {
+  const { loading, data } = useQuery<FetchPosts>(fetchPosts)
+  if (loading || data == null) return null
+  console.log(data)
   return (
     <Page>
       <Hero>

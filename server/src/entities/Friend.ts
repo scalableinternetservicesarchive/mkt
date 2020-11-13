@@ -1,8 +1,4 @@
-import {
-  BaseEntity,
-  Entity,
-  PrimaryColumn
-} from 'typeorm'
+import { BaseEntity, Entity, PrimaryColumn } from 'typeorm'
 
 @Entity()
 export class Friend extends BaseEntity {
@@ -11,5 +7,4 @@ export class Friend extends BaseEntity {
 
   @PrimaryColumn()
   friendID: number
-
 }
