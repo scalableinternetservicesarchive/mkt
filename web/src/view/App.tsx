@@ -48,7 +48,7 @@ export function AppBody() {
   return (
     <>
       <Router className={bodyClass}>
-        <Dashboard path={Route.HOME} />
+        <Dashboard path={Route.DASHBOARD} />
         <Login path={Route.LOGIN} />
       </Router>
       <Footer>
