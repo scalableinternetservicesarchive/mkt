@@ -7,7 +7,7 @@ export function NavBar() {
   return (
     <>
       <NavBarStyle>
-        <Link to="#" style={{ textDecorationLine: 'none' }}>
+        <Link to="/app/index" style={{ textDecorationLine: 'none' }}>
           Marketplace
         </Link>
         <UserWidget name="your name" small />

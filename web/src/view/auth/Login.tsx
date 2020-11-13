@@ -1,14 +1,16 @@
+import { RouteComponentProps } from '@reach/router'
 import * as React from 'react'
 import { useContext, useEffect, useState } from 'react'
 import { check } from '../../../../common/src/util'
 import { Button } from '../../style/button'
 import { Input } from '../../style/input'
 import { Spacer } from '../../style/spacer'
+import { Page } from '../page/Page'
 import { handleError } from '../toast/error'
 import { toastErr } from '../toast/toast'
 import { UserContext } from './user'
 
-export function Login() {
+export function Login(props: RouteComponentProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [err, setError] = useState({ email: false, password: false })
@@ -45,7 +47,7 @@ export function Login() {
   }
 
   return (
-    <>
+    <Page>
       <div className="mt3">
         <label className="db fw4 lh-copy f6" htmlFor="email">
           Email address
@@ -61,7 +63,7 @@ export function Login() {
       <div className="mt3">
         <Button onClick={login}>Sign Up</Button>
       </div>
-    </>
+    </Page>
   )
 }
 

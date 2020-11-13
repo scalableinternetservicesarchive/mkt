@@ -1,0 +1,1 @@
+-- insert into `post` (`title`, `description`, 'merchant', 'totalCommitted', 'category') values ('LuluLemon Leggings', 'Great leggings');

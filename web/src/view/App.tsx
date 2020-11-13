@@ -1,5 +1,5 @@
 import { ApolloProvider, useQuery } from '@apollo/client'
-import { Redirect, Router } from '@reach/router'
+import { Router } from '@reach/router'
 import * as React from 'react'
 import { hydrate, render } from 'react-dom'
 import { Provider as StyletronProvider } from 'styletron-react'
@@ -8,8 +8,8 @@ import { getApolloClient } from '../graphql/apolloClient'
 import { FetchUserContext } from '../graphql/query.gen'
 import { style } from '../style/styled'
 import { fetchUser } from './auth/fetchUser'
+import { Login } from './auth/Login'
 import { UserContext, UserCtx } from './auth/user'
-import { NavBar } from './nav/NavBar'
 import { Route } from './nav/route'
 import { Dashboard } from './page/Dashboard'
 
@@ -46,20 +46,13 @@ export function App() {
 
 export function AppBody() {
   return (
-    <div className={bodyClass}>
-      <NavBar />
-      <Router>
-        <Redirect noThrow from="app" to="index" />
+    <>
+      <Router className={bodyClass}>
         <Dashboard path={Route.DASHBOARD} />
-        {/* <Redirect noThrow from="app/playground" to="surveys" /> */}
-        {/* <HomePage path={Route.HOME} /> */}
-        {/* <LecturesPage path={Route.LECTURES} /> */}
-        {/* <ProjectsPage path={Route.PROJECTS} /> */}
-        {/* <PlaygroundPage path={Route.PLAYGROUND} /> */}
-        {/* <PlaygroundPage path={Route.PLAYGROUND_APP} /> */}
+        <Login path={Route.LOGIN} />
       </Router>
       <Footer>
-        <FooterText>© 2020 John Rothfels</FooterText>
+        <FooterText>© 2020 MKT</FooterText>
       </Footer>
     </div>
   )
