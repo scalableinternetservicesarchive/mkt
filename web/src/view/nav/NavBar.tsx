@@ -9,7 +9,7 @@ export function NavBar() {
   const { user } = useContext(UserContext)
   return (
     <NavBarStyle>
-      <Link to="/app/index" style={{ textDecorationLine: 'none' }}>
+      <Link to="/app" style={{ textDecorationLine: 'none' }}>
         Marketplace
       </Link>
       {user ? <UserWidget name={user?.name} small /> : <Link to="/app/login">Login</Link>}

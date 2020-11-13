@@ -25,13 +25,6 @@ export function Dashboard(props: DashboardProps) {
           description="I want to buy some leggings"
           title="Lululemon Leggings"
         />
-        {/* <Order
-          name="Param Shah"
-          goal={150}
-          fulfilled={40}
-          description="I want to buy some leggings"
-          title="Lululemon Leggings"
-        />
         <Order
           name="Param Shah"
           goal={150}
@@ -45,7 +38,14 @@ export function Dashboard(props: DashboardProps) {
           fulfilled={40}
           description="I want to buy some leggings"
           title="Lululemon Leggings"
-        /> */}
+        />
+        <Order
+          name="Param Shah"
+          goal={150}
+          fulfilled={40}
+          description="I want to buy some leggings"
+          title="Lululemon Leggings"
+        />
         <Button
           style={{
             position: 'absolute',
@@ -64,4 +64,6 @@ const Hero = style('div', 'mb4 w-100 ba b--mid-gray br2 pa3 tc', {
   borderWidth: '0px',
 })
 
-const Content = style('div', 'flex-l')
+const Content = style('div', 'flex-l', {
+  display: 'grid',
+})

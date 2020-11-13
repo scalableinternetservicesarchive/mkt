@@ -8,19 +8,25 @@ import { BodyText } from '../../style/text'
 import { AppRouteParams } from '../nav/route'
 import { Page } from './Page'
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {
-  title: string
-  description: string
-  // TODO: users: user[]
-  goal: number
-  fulfilled: number
+  // title: string
+  // description: string
+  // // TODO: users: user[]
+  // goal: number
+  // fulfilled: number
 }
 interface PostsPageProps extends RouteComponentProps, AppRouteParams {}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // TODO: remove PostsPageProps (only necessary for router)
 export function PostsPage(props: PostsPageProps & Props) {
-  const { title, description, goal, fulfilled } = props
+  const { title, description, goal, fulfilled } = {
+    title: 'title',
+    description: 'description',
+    goal: '500',
+    fulfilled: '100',
+  } //props
   return (
     <Page>
       <Content>
