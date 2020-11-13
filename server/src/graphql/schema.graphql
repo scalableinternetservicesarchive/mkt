@@ -53,3 +53,8 @@ type PostCommit {
   post: Post!
   user: User!
 }
+
+enum UserType {
+  ADMIN
+  USER
+}

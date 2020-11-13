@@ -5,7 +5,7 @@
  * Some routes are special values that map to one of the other routes depending on current location context.
  */
 export enum Route {
-  HOME = 'app',
+  DASHBOARD = 'app/index',
   LOGIN = 'app/login',
   PROFILE = 'app/profile',
   LECTURES = 'app/lectures',
