@@ -54,7 +54,7 @@ export function AppBody() {
       <Footer>
         <FooterText>© 2020 MKT</FooterText>
       </Footer>
-    </div>
+    </>
   )
 }
 
