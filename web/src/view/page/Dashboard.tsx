@@ -31,7 +31,6 @@ export function Dashboard(_: DashboardProps) {
         {data.posts.map(({ id, description, title }) => (
           <Order key={id} id={id} name="Param Shah" goal={150} fulfilled={40} description={description} title={title} />
         ))}
-
         {user && (
           <Button
             style={{
