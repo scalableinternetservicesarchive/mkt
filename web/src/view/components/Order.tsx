@@ -1,11 +1,13 @@
 import { RouteComponentProps, useNavigate } from '@reach/router'
 import * as React from 'react'
+import { PieChart } from 'react-minimal-pie-chart'
 import { H3 } from '../../style/header'
 import { style } from '../../style/styled'
 import { UserWidget } from '../components/UserWidget'
 import { AppRouteParams } from '../nav/route'
 
 interface Props {
+  id: number
   title: string
   name: string
   description: string
@@ -17,12 +19,12 @@ interface OrderProps extends RouteComponentProps, AppRouteParams {}
 
 export function Order(props: OrderProps & Props) {
   const navigate = useNavigate()
-  const { title, name, description, fulfilled, goal } = props
+  const { id, title, name, description, fulfilled, goal } = props
   return (
     <Card
       onClick={() => {
-        navigate('post').catch(err => {
-          console.log('error')
+        navigate(`post/${id}`).catch(err => {
+          console.log('error', err)
         })
       }}
     >
@@ -32,10 +34,8 @@ export function Order(props: OrderProps & Props) {
         <p>{description}</p>
       </Content>
       <Content>
-        {/* <PieChart
-          style={{
-
-					}}
+        <PieChart
+          style={{}}
           data={[
             { title: `Fulfilled: $${fulfilled}`, value: fulfilled, color: '#E38627' },
             { title: `Goal: $${goal}`, value: goal - fulfilled, color: '#bfbfbf' },
@@ -45,7 +45,7 @@ export function Order(props: OrderProps & Props) {
           radius={30}
           lineWidth={30}
           paddingAngle={5}
-        /> */}
+        />
         <H3 style={{ textAlign: 'center' }}>
           ${fulfilled}/${goal}
         </H3>

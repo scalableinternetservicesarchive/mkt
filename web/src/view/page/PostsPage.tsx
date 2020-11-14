@@ -1,32 +1,29 @@
+import { useQuery } from '@apollo/client'
 import { RouteComponentProps } from '@reach/router'
 import * as React from 'react'
+import { Post } from '../../graphql/query.gen'
 import { Button } from '../../style/button'
 import { H2, H3 } from '../../style/header'
 import { Spacer } from '../../style/spacer'
 import { style } from '../../style/styled'
 import { BodyText } from '../../style/text'
 import { AppRouteParams } from '../nav/route'
+import { fetchPost } from './fetchPosts'
 import { Page } from './Page'
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {
-  // title: string
-  // description: string
-  // // TODO: users: user[]
-  // goal: number
-  // fulfilled: number
+  postId?: number
 }
 interface PostsPageProps extends RouteComponentProps, AppRouteParams {}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // TODO: remove PostsPageProps (only necessary for router)
-export function PostsPage(props: PostsPageProps & Props) {
-  const { title, description, goal, fulfilled } = {
-    title: 'title',
-    description: 'description',
-    goal: '500',
-    fulfilled: '100',
-  } //props
+export function PostsPage({ postId }: PostsPageProps & Props) {
+  const { loading, data } = useQuery<Post>(fetchPost, {
+    variables: { postId: Number(postId) },
+  })
+  if (loading || data?.post == null) return null
+  const { title, description } = data.post
   return (
     <Page>
       <Content>
@@ -39,7 +36,7 @@ export function PostsPage(props: PostsPageProps & Props) {
         </LContent>
         <RContent>
           <H2>
-            ${fulfilled} / ${goal}
+            ${100} / ${200}
           </H2>
           <H3>fulfilled</H3>
           <Spacer $h6 />
@@ -49,7 +46,6 @@ export function PostsPage(props: PostsPageProps & Props) {
     </Page>
   )
 }
-
 const Content = style('div', 'flex-l')
 
 const LContent = style('div', 'flex-grow-0 w-70-l mr4-l')

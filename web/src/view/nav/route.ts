@@ -6,7 +6,7 @@
  */
 export enum Route {
   DASHBOARD = 'app/',
-  POSTS = 'app/post',
+  POSTS = 'app/post/:postId',
   LOGIN = 'app/login',
   PROFILE = 'app/profile',
   LECTURES = 'app/lectures',
