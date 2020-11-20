@@ -2,6 +2,7 @@ import { readFileSync } from 'fs'
 import { PubSub } from 'graphql-yoga'
 import path from 'path'
 import { Post } from '../entities/Post'
+import { PostCommit } from '../entities/PostCommit'
 import { User } from '../entities/User'
 import { Resolvers } from './schema.types'
 
@@ -27,8 +28,20 @@ export const graphqlRoot: Resolvers<Context> = {
   },
 
   Post: {
-    owner: async (self, arg, ctx) => {
+    owner: async (self, _, __) => {
       return User.findOne({ where: { id: (self as any).ownerId } }) as any
+    },
+  },
+
+  PostCommit: {
+    user: async (self, _, __) => {
+      return User.findOne({ where: { id: (self as any).userId } }) as any
+    },
+  },
+
+  User: {
+    commits: async (self, _, __) => {
+      return PostCommit.find({ where: { userId: (self as any).id } }) as any
     },
   },
 }
