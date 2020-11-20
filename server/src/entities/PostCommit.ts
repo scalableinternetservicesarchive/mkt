@@ -26,6 +26,9 @@ export class PostCommit extends BaseEntity {
   })
   amount: number
 
+  @Column()
+  postId: number
+
   @ManyToOne(() => Post, post => post.commits, {
     cascade: true,
   })

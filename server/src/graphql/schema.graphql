@@ -43,6 +43,7 @@ type User {
 type PostCommit {
   id: Int!
   amount: Int!
+  postId: Int!
   post: Post!
   userId: Int!
   user: User!

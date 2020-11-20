@@ -59,8 +59,6 @@ export class Post extends BaseEntity implements GraphqlPost {
   @ManyToOne(() => User, user => user.posts)
   owner: User
 
-  @OneToMany(() => PostCommit, commit => commit.post, {
-    eager: true,
-  })
+  @OneToMany(() => PostCommit, commit => commit.post)
   commits: PostCommit[]
 }
