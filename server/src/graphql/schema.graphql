@@ -24,6 +24,7 @@ type Post {
   title: String!
   description: String!
   totalCommitted: Int!
+  ownerId: Int!
   owner: User!
   commits: [PostCommit!]!
   category: Category!
@@ -42,7 +43,9 @@ type User {
 type PostCommit {
   id: Int!
   amount: Int!
+  postId: Int!
   post: Post!
+  userId: Int!
   user: User!
 }
 

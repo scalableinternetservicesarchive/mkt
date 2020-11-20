@@ -5,7 +5,7 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm'
 import { User as GraphqlUser, UserType } from '../graphql/schema.types'
 import { Post } from './Post'
@@ -48,8 +48,6 @@ export class User extends BaseEntity implements GraphqlUser {
   @OneToMany(() => Post, post => post.owner)
   posts: Post[]
 
-  @OneToMany(() => PostCommit, commit => commit.user, {
-    eager: true,
-  })
+  @OneToMany(() => PostCommit, commit => commit.user)
   commits: PostCommit[]
 }
