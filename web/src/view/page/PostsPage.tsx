@@ -8,7 +8,7 @@ import { Spacer } from '../../style/spacer'
 import { style } from '../../style/styled'
 import { BodyText } from '../../style/text'
 import { AppRouteParams } from '../nav/route'
-import { fetchPost } from './fetchPosts'
+import { FETCH_POST } from './fetchPosts'
 import { Page } from './Page'
 
 interface Props {
@@ -19,7 +19,7 @@ interface PostsPageProps extends RouteComponentProps, AppRouteParams {}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // TODO: remove PostsPageProps (only necessary for router)
 export function PostsPage({ postId }: PostsPageProps & Props) {
-  const { loading, data } = useQuery<Post>(fetchPost, {
+  const { loading, data } = useQuery<Post>(FETCH_POST, {
     variables: { postId: Number(postId) },
   })
   if (loading || data?.post == null) return null

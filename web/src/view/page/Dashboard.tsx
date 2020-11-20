@@ -9,14 +9,14 @@ import { style } from '../../style/styled'
 import { UserContext } from '../auth/user'
 import { Order } from '../components/Order'
 import { AppRouteParams } from '../nav/route'
-import { fetchPosts } from './fetchPosts'
+import { FETCH_POSTS } from './fetchPosts'
 import { Page } from './Page'
 
 interface DashboardProps extends RouteComponentProps, AppRouteParams {}
 
-export function Dashboard(_: DashboardProps) {
+export function Dashboard({ navigate }: DashboardProps) {
   const { user } = useContext(UserContext)
-  const { loading, data } = useQuery<Posts>(fetchPosts)
+  const { loading, data } = useQuery<Posts>(FETCH_POSTS)
   if (loading || data == null) return null
   return (
     <Page>
@@ -37,6 +37,12 @@ export function Dashboard(_: DashboardProps) {
               position: 'absolute',
               bottom: 64,
               right: 64,
+            }}
+            onClick={() => {
+              if (navigate == null) return
+              navigate('newPost').catch(err => {
+                console.log('error', err)
+              })
             }}
           >
             Add post

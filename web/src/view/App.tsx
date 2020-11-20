@@ -12,6 +12,7 @@ import { Login } from './auth/Login'
 import { UserContext, UserCtx } from './auth/user'
 import { Route } from './nav/route'
 import { Dashboard } from './page/Dashboard'
+import { NewPost } from './page/NewPost'
 import { PostsPage } from './page/PostsPage'
 
 const Styletron = require('styletron-engine-monolithic')
@@ -51,6 +52,7 @@ export function AppBody() {
       <Router className={bodyClass}>
         <Dashboard path={Route.DASHBOARD} />
         <PostsPage path={Route.POSTS} />
+        <NewPost path={Route.NEW_POST} />
         <Login path={Route.LOGIN} />
       </Router>
       <Footer>
