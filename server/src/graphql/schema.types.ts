@@ -29,6 +29,7 @@ export interface Post {
   title: Scalars['String']
   description: Scalars['String']
   totalCommitted: Scalars['Int']
+  ownerId: Scalars['Int']
   owner: User
   commits: Array<PostCommit>
   category: Category
@@ -182,6 +183,7 @@ export type PostResolvers<
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   totalCommitted?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  ownerId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   owner?: Resolver<ResolversTypes['User'], ParentType, ContextType>
   commits?: Resolver<Array<ResolversTypes['PostCommit']>, ParentType, ContextType>
   category?: Resolver<ResolversTypes['Category'], ParentType, ContextType>

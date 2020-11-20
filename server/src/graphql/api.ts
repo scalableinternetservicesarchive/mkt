@@ -25,4 +25,10 @@ export const graphqlRoot: Resolvers<Context> = {
     post: async (_, { postId }) => (await Post.findOne({ where: { id: postId } })) || null,
     posts: () => Post.find(),
   },
+
+  Post: {
+    owner: async (self, arg, ctx) => {
+      return User.findOne({ where: { id: (self as any).ownerId } }) as any
+    },
+  },
 }

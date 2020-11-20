@@ -24,6 +24,7 @@ type Post {
   title: String!
   description: String!
   totalCommitted: Int!
+  ownerId: Int!
   owner: User!
   commits: [PostCommit!]!
   category: Category!
