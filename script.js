@@ -1,5 +1,6 @@
 import http from 'k6/http'
 import { Counter, Rate } from 'k6/metrics'
+import { sleep } from 'k6'
 
 export const options = {
   scenarios: {
@@ -7,7 +8,7 @@ export const options = {
       executor: 'ramping-vus',
       startVUs: 0,
       stages: [
-        { duration: '60s', target: 5000 },
+        { duration: '60s', target: 1000 },
         { duration: '60s', target: 0 },
       ],
       gracefulRampDown: '0s',
