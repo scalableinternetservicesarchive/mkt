@@ -4,6 +4,7 @@ import { Button } from '../../style/button'
 import { Spacer } from '../../style/spacer'
 import { style } from '../../style/styled'
 import { AppRouteParams } from '../nav/route'
+import { Page } from './Page'
 // import { CREATE_POST } from './fetchPosts'
 
 interface Props {
@@ -19,7 +20,7 @@ export function NewPost(_: NewPostProps & Props) {
   const [description, setDescription] = React.useState('')
   const [totalCommitted, setTotalComitted] = React.useState('')
   return (
-    <>
+    <Page>
       <Content>
         <LContent>
           <label htmlFor="name" className="f6 b db mb2">
@@ -66,7 +67,7 @@ export function NewPost(_: NewPostProps & Props) {
           </Button>
         </RContent>
       </Content>
-    </>
+    </Page>
   )
 }
 const Content = style('div', 'flex-l')

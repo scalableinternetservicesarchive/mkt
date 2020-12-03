@@ -5,8 +5,8 @@ import { Post } from '../../graphql/query.gen'
 import { Button } from '../../style/button'
 import { H2, H3 } from '../../style/header'
 import { Spacer } from '../../style/spacer'
-import { style } from '../../style/styled'
 import { BodyText } from '../../style/text'
+import { UserWidget } from '../components/UserWidget'
 import { AppRouteParams } from '../nav/route'
 import { FETCH_POST } from './fetchPosts'
 import { Page } from './Page'
@@ -23,31 +23,34 @@ export function PostsPage({ postId }: PostsPageProps & Props) {
     variables: { postId: Number(postId) },
   })
   if (loading || data?.post == null) return null
-  const { title, description } = data.post
+  const { title, description, totalCommitted, owner, commits } = data.post
   return (
     <Page>
-      <Content>
-        <LContent>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+        <UserWidget name={owner.name} />
+        <div className="ma4">
           <H2>{title}</H2>
           <BodyText>People part of this order:</BodyText>
-          {/* Some stuff will go here for users part of this order */}
+          <Spacer $h3 />
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            {commits.map(commit => (
+              <div key={commit.user.name} style={{ marginRight: 8 }}>
+                <UserWidget name={commit.user.name} small />
+              </div>
+            ))}
+          </div>
           <Spacer $h4 />
           <BodyText>{description}</BodyText>
-        </LContent>
-        <RContent>
+        </div>
+        <div className="pa4">
           <H2>
-            ${100} / ${200}
+            ${totalCommitted} / ${100}
           </H2>
           <H3>fulfilled</H3>
           <Spacer $h6 />
           <Button>Join this order</Button>
-        </RContent>
-      </Content>
+        </div>
+      </div>
     </Page>
   )
 }
-const Content = style('div', 'flex-l')
-
-const LContent = style('div', 'flex-grow-0 w-70-l mr4-l')
-
-const RContent = style('div', 'flex-grow-0  w-30-l', { minWidth: 'max-content' })

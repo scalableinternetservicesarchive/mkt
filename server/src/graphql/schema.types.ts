@@ -50,7 +50,9 @@ export interface PostCommit {
   __typename?: 'PostCommit'
   id: Scalars['Int']
   amount: Scalars['Int']
+  postId: Scalars['Int']
   post: Post
+  userId: Scalars['Int']
   user: User
 }
 
@@ -210,7 +212,9 @@ export type PostCommitResolvers<
 > = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  postId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   post?: Resolver<ResolversTypes['Post'], ParentType, ContextType>
+  userId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }

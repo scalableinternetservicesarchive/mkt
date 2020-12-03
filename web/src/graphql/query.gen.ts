@@ -26,11 +26,30 @@ export interface FetchUserContext {
 // GraphQL query operation: Posts
 // ====================================================
 
+export interface Posts_posts_owner {
+  __typename: "User";
+  name: string;
+}
+
+export interface Posts_posts_commits_user {
+  __typename: "User";
+  name: string;
+}
+
+export interface Posts_posts_commits {
+  __typename: "PostCommit";
+  amount: number;
+  user: Posts_posts_commits_user;
+}
+
 export interface Posts_posts {
   __typename: "Post";
   id: number;
   title: string;
   description: string;
+  totalCommitted: number;
+  owner: Posts_posts_owner;
+  commits: Posts_posts_commits[];
 }
 
 export interface Posts {
@@ -46,12 +65,30 @@ export interface Posts {
 // GraphQL query operation: Post
 // ====================================================
 
+export interface Post_post_owner {
+  __typename: "User";
+  name: string;
+}
+
+export interface Post_post_commits_user {
+  __typename: "User";
+  name: string;
+}
+
+export interface Post_post_commits {
+  __typename: "PostCommit";
+  amount: number;
+  user: Post_post_commits_user;
+}
+
 export interface Post_post {
   __typename: "Post";
   id: number;
   title: string;
   description: string;
   totalCommitted: number;
+  owner: Post_post_owner;
+  commits: Post_post_commits[];
 }
 
 export interface Post {

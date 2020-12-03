@@ -6,6 +6,16 @@ export const FETCH_POSTS = gql`
       id
       title
       description
+      totalCommitted
+      owner {
+        name
+      }
+      commits {
+        amount
+        user {
+          name
+        }
+      }
     }
   }
 `
@@ -17,6 +27,15 @@ export const FETCH_POST = gql`
       title
       description
       totalCommitted
+      owner {
+        name
+      }
+      commits {
+        amount
+        user {
+          name
+        }
+      }
     }
   }
 `
