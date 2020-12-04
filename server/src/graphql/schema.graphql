@@ -10,6 +10,7 @@
 # may use a cached response, while mutations always result in a request.
 schema {
   query: Query
+  mutation: Mutation
 }
 
 type Query {
@@ -19,11 +20,32 @@ type Query {
   posts: [Post!]!
 }
 
+type Mutation {
+  createPost(input: CreatePostInput!): Post
+  commit(input: CommitInput!): Boolean!
+}
+
+input CreatePostInput {
+  title: String!
+  description: String!
+  goal: Int!
+  ownerId: Int!
+  merchant: String!
+  initialContribution: Int!
+  category: Category
+}
+
+input CommitInput {
+  amount: Int!
+  postId: Int!
+  userId: Int!
+}
+
 type Post {
   id: Int!
   title: String!
   description: String!
-  totalCommitted: Int!
+  goal: Int!
   ownerId: Int!
   owner: User!
   commits: [PostCommit!]!

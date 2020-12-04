@@ -28,13 +28,13 @@ export function Dashboard({ navigate }: DashboardProps) {
         </Hero>
       )}
       <Content>
-        {data.posts.map(({ id, description, title }) => (
-          <Order key={id} id={id} name="Param Shah" goal={150} fulfilled={40} description={description} title={title} />
+        {data.posts.map(post => (
+          <Order key={post.id} post={post} />
         ))}
         {user && (
           <Button
             style={{
-              position: 'absolute',
+              position: 'fixed',
               bottom: 64,
               right: 64,
             }}
@@ -57,6 +57,6 @@ const Hero = style('div', 'mb4 w-100 ba b--mid-gray br2 pa3 tc', {
   borderWidth: '0px',
 })
 
-const Content = style('div', 'flex-l', {
-  display: 'grid',
+const Content = style('div', '', {
+  display: 'flex',
 })
