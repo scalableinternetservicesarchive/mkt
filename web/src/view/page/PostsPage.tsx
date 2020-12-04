@@ -20,7 +20,7 @@ interface PostsPageProps extends RouteComponentProps, AppRouteParams {}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // TODO: remove PostsPageProps (only necessary for router)
-export function PostsPage({ postId }: PostsPageProps & Props) {
+export function PostsPage({ postId, navigate }: PostsPageProps & Props) {
   const { user } = React.useContext(UserContext)
   const [contribution, setContribution] = useState('')
   const [committing, setCommitting] = useState(false)
@@ -36,6 +36,23 @@ export function PostsPage({ postId }: PostsPageProps & Props) {
   commits.forEach(commit => {
     totalCommitted += commit.amount
   })
+
+  const tryCommit = () => {
+    console.log('user in commit:', user)
+    if (!user) {
+      if (navigate == null) return
+      navigate('/app/login', { replace: false }).catch(err => {
+        console.log('error', err)
+      })
+    } else {
+      void commit({
+        variables: { input: { amount: Number(contribution), postId: data.post?.id, userId: user?.id } },
+      })
+      setContribution('')
+      setCommitting(false)
+    }
+  }
+
   return (
     <Page>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
@@ -77,17 +94,7 @@ export function PostsPage({ postId }: PostsPageProps & Props) {
                 value={contribution}
                 onChange={e => setContribution(e.target.value)}
               />
-              <Button
-                onClick={() => {
-                  void commit({
-                    variables: { input: { amount: Number(contribution), postId: data.post?.id, userId: user?.id } },
-                  })
-                  setContribution('')
-                  setCommitting(false)
-                }}
-              >
-                Submit
-              </Button>
+              <Button onClick={tryCommit}>Submit</Button>
             </>
           ) : (
             <Button onClick={() => setCommitting(true)}>Join this order</Button>
