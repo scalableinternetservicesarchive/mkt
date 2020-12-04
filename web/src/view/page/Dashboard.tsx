@@ -16,7 +16,7 @@ interface DashboardProps extends RouteComponentProps, AppRouteParams {}
 
 export function Dashboard({ navigate }: DashboardProps) {
   const { user } = useContext(UserContext)
-  const { loading, data } = useQuery<Posts>(FETCH_POSTS)
+  const { loading, data } = useQuery<Posts>(FETCH_POSTS, { pollInterval: 1000 })
   if (loading || data == null) return null
   return (
     <Page>

@@ -26,6 +26,7 @@ export function PostsPage({ postId }: PostsPageProps & Props) {
   const [committing, setCommitting] = useState(false)
   const { loading, data } = useQuery<Post>(FETCH_POST, {
     variables: { postId: Number(postId) },
+    pollInterval: 1000,
   })
   const [commit] = useMutation<Commit>(COMMIT)
 
