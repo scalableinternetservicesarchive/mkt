@@ -1,12 +1,16 @@
 import * as React from 'react'
 import { style } from '../../style/styled'
 
-export function UserWidget(props: { name: string; small?: boolean }) {
+export function UserWidget(props: { name?: string; small?: boolean }) {
   const { name, small } = props
   return (
-    <div className="pa1 tc">
-      <div className={`bg-silver br-100 h${small ? '2' : '3'} w${small ? '2' : '3'} dib`}></div>
-      {!small && <NameText className="f6 mt1 mw4">{name}</NameText>}
+    <div className="tc">
+      <img
+        src="/app/assets/images/blank-profile-picture.png"
+        className={small ? 'br-100 h2 w2 dib' : 'br-100 h3 w3 dib'}
+        alt="avatar"
+      />
+      {name && <NameText className="f6 mt1 mw4">{name}</NameText>}
     </div>
   )
 }

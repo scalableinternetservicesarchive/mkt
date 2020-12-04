@@ -6,7 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm'
 import { Category, Post as GraphqlPost } from '../graphql/schema.types'
 import { PostCommit } from './PostCommit'
@@ -44,7 +44,7 @@ export class Post extends BaseEntity implements GraphqlPost {
   @Column({
     unsigned: true,
   })
-  totalCommitted: number
+  goal: number
 
   @Column({
     type: 'enum',
