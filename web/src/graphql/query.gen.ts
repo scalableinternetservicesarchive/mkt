@@ -126,6 +126,23 @@ export interface CreatePostVariables {
 // @generated
 // This file was automatically generated and should not be edited.
 
+// ====================================================
+// GraphQL mutation operation: Commit
+// ====================================================
+
+export interface Commit {
+  commit: boolean;
+}
+
+export interface CommitVariables {
+  input: CommitInput;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
 //==============================================================
 // START Enums and Input Objects
 //==============================================================
@@ -136,6 +153,12 @@ export enum Category {
   FOOD = "FOOD",
   GROCERIES = "GROCERIES",
   HOUSEWARES = "HOUSEWARES",
+}
+
+export interface CommitInput {
+  amount: number;
+  postId: number;
+  userId: number;
 }
 
 export interface CreatePostInput {

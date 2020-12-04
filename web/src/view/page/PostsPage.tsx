@@ -1,14 +1,16 @@
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { RouteComponentProps } from '@reach/router'
 import * as React from 'react'
-import { Post } from '../../graphql/query.gen'
+import { useState } from 'react'
+import { Commit, Post } from '../../graphql/query.gen'
 import { Button } from '../../style/button'
 import { H2, H3 } from '../../style/header'
 import { Spacer } from '../../style/spacer'
 import { BodyText } from '../../style/text'
+import { UserContext } from '../auth/user'
 import { UserWidget } from '../components/UserWidget'
 import { AppRouteParams } from '../nav/route'
-import { FETCH_POST } from './fetchPosts'
+import { COMMIT, FETCH_POST } from './fetchPosts'
 import { Page } from './Page'
 
 interface Props {
@@ -19,9 +21,14 @@ interface PostsPageProps extends RouteComponentProps, AppRouteParams {}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // TODO: remove PostsPageProps (only necessary for router)
 export function PostsPage({ postId }: PostsPageProps & Props) {
+  const { user } = React.useContext(UserContext)
+  const [contribution, setContribution] = useState('')
+  const [committing, setCommitting] = useState(false)
   const { loading, data } = useQuery<Post>(FETCH_POST, {
     variables: { postId: Number(postId) },
   })
+  const [commit] = useMutation<Commit>(COMMIT)
+
   if (loading || data?.post == null) return null
   const { title, description, goal, owner, commits } = data.post
 
@@ -58,7 +65,33 @@ export function PostsPage({ postId }: PostsPageProps & Props) {
           </H2>
           <H3>fulfilled</H3>
           <Spacer $h6 />
-          <Button>Join this order</Button>
+          {committing ? (
+            <>
+              <label htmlFor="name" className="f6 b db mb2">
+                Amount
+              </label>
+              <input
+                id="name"
+                className="input-reset ba b--black-20 pa2 mb2 db w-100"
+                type="text"
+                value={contribution}
+                onChange={e => setContribution(e.target.value)}
+              />
+              <Button
+                onClick={() => {
+                  void commit({
+                    variables: { input: { amount: Number(contribution), postId: data.post?.id, userId: user?.id } },
+                  })
+                  setContribution('')
+                  setCommitting(false)
+                }}
+              >
+                Submit
+              </Button>
+            </>
+          ) : (
+            <Button onClick={() => setCommitting(true)}>Join this order</Button>
+          )}
         </div>
       </div>
     </Page>

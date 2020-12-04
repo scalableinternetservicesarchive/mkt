@@ -17,9 +17,8 @@ interface Props {
 interface NewPostProps extends RouteComponentProps, AppRouteParams {}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-// TODO: remove PostsPageProps (only necessary for router)
 export function NewPost(_: NewPostProps & Props) {
-  const ctx = React.useContext(UserContext)
+  const { user } = React.useContext(UserContext)
   const [createPost] = useMutation<CreatePost>(CREATE_POST)
   const [title, setTitle] = React.useState('')
   const [description, setDescription] = React.useState('')
@@ -91,7 +90,7 @@ export function NewPost(_: NewPostProps & Props) {
                     description,
                     goal: Number(goal),
                     merchant,
-                    ownerId: ctx.user?.id,
+                    ownerId: user?.id,
                     initialContribution: Number(initialContribution),
                   },
                 },

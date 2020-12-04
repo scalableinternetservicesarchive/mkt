@@ -47,3 +47,9 @@ export const CREATE_POST = gql`
     }
   }
 `
+
+export const COMMIT = gql`
+  mutation Commit($input: CommitInput!) {
+    commit(input: $input)
+  }
+`
