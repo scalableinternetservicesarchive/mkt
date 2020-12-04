@@ -47,7 +47,7 @@ export interface Posts_posts {
   id: number;
   title: string;
   description: string;
-  totalCommitted: number;
+  goal: number;
   owner: Posts_posts_owner;
   commits: Posts_posts_commits[];
 }
@@ -86,7 +86,7 @@ export interface Post_post {
   id: number;
   title: string;
   description: string;
-  totalCommitted: number;
+  goal: number;
   owner: Post_post_owner;
   commits: Post_post_commits[];
 }
@@ -104,9 +104,49 @@ export interface PostVariables {
 // @generated
 // This file was automatically generated and should not be edited.
 
+// ====================================================
+// GraphQL mutation operation: CreatePost
+// ====================================================
+
+export interface CreatePost_createPost {
+  __typename: "Post";
+  id: number;
+}
+
+export interface CreatePost {
+  createPost: CreatePost_createPost | null;
+}
+
+export interface CreatePostVariables {
+  input: CreatePostInput;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
 //==============================================================
 // START Enums and Input Objects
 //==============================================================
+
+export enum Category {
+  ALCOHOL = "ALCOHOL",
+  CLOTHING = "CLOTHING",
+  FOOD = "FOOD",
+  GROCERIES = "GROCERIES",
+  HOUSEWARES = "HOUSEWARES",
+}
+
+export interface CreatePostInput {
+  title: string;
+  description: string;
+  goal: number;
+  ownerId: number;
+  merchant: string;
+  initialContribution: number;
+  category?: Category | null;
+}
 
 //==============================================================
 // END Enums and Input Objects

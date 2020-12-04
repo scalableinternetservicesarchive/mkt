@@ -27,8 +27,10 @@ export function NavBar() {
           </>
         ) : (
           <>
-						<a className="f6 mr3 dib white bg-animate hover-bg-white hover-black no-underline pv2 ph4 br-pill ba b--white-20"
-						href="/app/login">
+            <a
+              className="f6 mr3 dib white bg-animate hover-bg-white hover-black no-underline pv2 ph4 br-pill ba b--white-20"
+              href="/app/login"
+            >
               Sign Out
             </a>
             <UserWidget small />

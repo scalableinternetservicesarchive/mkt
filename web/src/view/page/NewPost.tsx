@@ -1,9 +1,13 @@
+import { useMutation } from '@apollo/client'
 import { RouteComponentProps } from '@reach/router'
 import * as React from 'react'
+import { CreatePost } from '../../graphql/query.gen'
 import { Button } from '../../style/button'
 import { Spacer } from '../../style/spacer'
 import { style } from '../../style/styled'
+import { UserContext } from '../auth/user'
 import { AppRouteParams } from '../nav/route'
+import { CREATE_POST } from './fetchPosts'
 import { Page } from './Page'
 // import { CREATE_POST } from './fetchPosts'
 
@@ -15,10 +19,13 @@ interface NewPostProps extends RouteComponentProps, AppRouteParams {}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // TODO: remove PostsPageProps (only necessary for router)
 export function NewPost(_: NewPostProps & Props) {
-  // const [createPost] = useMutation<CreatePost>(CREATE_POST)
+  const ctx = React.useContext(UserContext)
+  const [createPost] = useMutation<CreatePost>(CREATE_POST)
   const [title, setTitle] = React.useState('')
   const [description, setDescription] = React.useState('')
-  const [totalCommitted, setTotalComitted] = React.useState('')
+  const [merchant, setMerchant] = React.useState('')
+  const [goal, setGoal] = React.useState('')
+  const [initialContribution, setInitialContribution] = React.useState('')
   return (
     <Page>
       <Content>
@@ -32,6 +39,16 @@ export function NewPost(_: NewPostProps & Props) {
             type="text"
             value={title}
             onChange={e => setTitle(e.target.value)}
+          />
+          <label htmlFor="name" className="f6 b db mb2">
+            Merchant
+          </label>
+          <input
+            id="name"
+            className="input-reset ba b--black-20 pa2 mb2 db w-100"
+            type="text"
+            value={merchant}
+            onChange={e => setMerchant(e.target.value)}
           />
           <label htmlFor="description" className="f6 b db mb2">
             Description
@@ -51,16 +68,39 @@ export function NewPost(_: NewPostProps & Props) {
             id="name"
             className="input-reset ba b--black-20 pa2 mb2 db w-100"
             type="text"
-            value={totalCommitted}
-            onChange={e => setTotalComitted(e.target.value)}
+            value={goal}
+            onChange={e => setGoal(e.target.value)}
+          />
+          <label htmlFor="name" className="f6 b db mb2">
+            Initial contribution
+          </label>
+          <input
+            id="name"
+            className="input-reset ba b--black-20 pa2 mb2 db w-100"
+            type="text"
+            value={initialContribution}
+            onChange={e => setInitialContribution(e.target.value)}
           />
           <Spacer $h6 />
           <Button
             onClick={() => {
-              // void createPost({ variables: { title, description, totalCommitted: Number(totalCommitted) } })
+              void createPost({
+                variables: {
+                  input: {
+                    title,
+                    description,
+                    goal: Number(goal),
+                    merchant,
+                    ownerId: ctx.user?.id,
+                    initialContribution: Number(initialContribution),
+                  },
+                },
+              })
               setTitle('')
               setDescription('')
-              setTotalComitted('')
+              setGoal('')
+              setMerchant('')
+              setInitialContribution('')
             }}
           >
             Create order

@@ -15,7 +15,11 @@ interface OrderProps extends RouteComponentProps, AppRouteParams {}
 
 export function Order(props: OrderProps & Props) {
   const navigate = useNavigate()
-  const { id, title, description, totalCommitted, owner } = props.post
+  const { id, title, description, goal, owner, commits } = props.post
+  let totalCommitted = 0
+  commits.forEach(commit => {
+    totalCommitted += commit.amount
+  })
   return (
     <Card
       onClick={() => {
@@ -34,7 +38,7 @@ export function Order(props: OrderProps & Props) {
           style={{ height: 100, width: 100 }}
           data={[
             { title: `Fulfilled: $${totalCommitted}`, value: totalCommitted, color: '#E38627' },
-            { title: `Goal: $${100}`, value: 100 - totalCommitted, color: '#bfbfbf' },
+            { title: `Goal: $${goal}`, value: goal, color: '#bfbfbf' },
           ]}
           // reveal={percentage}
           startAngle={-90}
@@ -43,7 +47,7 @@ export function Order(props: OrderProps & Props) {
           paddingAngle={5}
         />
         <H4 style={{ textAlign: 'center' }}>
-          ${totalCommitted}/${100}
+          ${totalCommitted}/${goal}
         </H4>
       </div>
     </Card>

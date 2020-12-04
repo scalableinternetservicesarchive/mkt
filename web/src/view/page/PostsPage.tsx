@@ -23,11 +23,19 @@ export function PostsPage({ postId }: PostsPageProps & Props) {
     variables: { postId: Number(postId) },
   })
   if (loading || data?.post == null) return null
-  const { title, description, totalCommitted, owner, commits } = data.post
+  const { title, description, goal, owner, commits } = data.post
+
+  let totalCommitted = 0
+  commits.forEach(commit => {
+    totalCommitted += commit.amount
+  })
   return (
     <Page>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-        <UserWidget name={owner.name} />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <H3>Created by:</H3>
+          <UserWidget name={owner.name} />
+        </div>
         <div className="ma4">
           <H2>{title}</H2>
           <BodyText>People part of this order:</BodyText>
@@ -36,15 +44,17 @@ export function PostsPage({ postId }: PostsPageProps & Props) {
             {commits.map(commit => (
               <div key={commit.user.name} style={{ marginRight: 8 }}>
                 <UserWidget name={commit.user.name} small />
+                <p style={{ textAlign: 'center' }}>${commit.amount}</p>
               </div>
             ))}
           </div>
           <Spacer $h4 />
+          <H2>Description:</H2>
           <BodyText>{description}</BodyText>
         </div>
         <div className="pa4">
           <H2>
-            ${totalCommitted} / ${100}
+            ${totalCommitted} / ${goal}
           </H2>
           <H3>fulfilled</H3>
           <Spacer $h6 />

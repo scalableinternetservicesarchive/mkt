@@ -34,7 +34,7 @@ export function Dashboard({ navigate }: DashboardProps) {
         {user && (
           <Button
             style={{
-              position: 'absolute',
+              position: 'fixed',
               bottom: 64,
               right: 64,
             }}

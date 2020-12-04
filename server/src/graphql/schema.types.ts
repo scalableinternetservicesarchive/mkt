@@ -23,12 +23,42 @@ export interface QueryPostArgs {
   postId: Scalars['Int']
 }
 
+export interface Mutation {
+  __typename?: 'Mutation'
+  createPost?: Maybe<Post>
+  commit: Scalars['Boolean']
+}
+
+export interface MutationCreatePostArgs {
+  input: CreatePostInput
+}
+
+export interface MutationCommitArgs {
+  input: CommitInput
+}
+
+export interface CreatePostInput {
+  title: Scalars['String']
+  description: Scalars['String']
+  goal: Scalars['Int']
+  ownerId: Scalars['Int']
+  merchant: Scalars['String']
+  initialContribution: Scalars['Int']
+  category?: Maybe<Category>
+}
+
+export interface CommitInput {
+  amount: Scalars['Int']
+  postId: Scalars['Int']
+  userId: Scalars['Int']
+}
+
 export interface Post {
   __typename?: 'Post'
   id: Scalars['Int']
   title: Scalars['String']
   description: Scalars['String']
-  totalCommitted: Scalars['Int']
+  goal: Scalars['Int']
   ownerId: Scalars['Int']
   owner: User
   commits: Array<PostCommit>
@@ -148,24 +178,30 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>
   Int: ResolverTypeWrapper<Scalars['Int']>
-  Post: ResolverTypeWrapper<Post>
+  Mutation: ResolverTypeWrapper<{}>
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
+  CreatePostInput: CreatePostInput
   String: ResolverTypeWrapper<Scalars['String']>
+  CommitInput: CommitInput
+  Post: ResolverTypeWrapper<Post>
   User: ResolverTypeWrapper<User>
   PostCommit: ResolverTypeWrapper<PostCommit>
   UserType: UserType
   Category: Category
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
 }
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Query: {}
   Int: Scalars['Int']
-  Post: Post
+  Mutation: {}
+  Boolean: Scalars['Boolean']
+  CreatePostInput: CreatePostInput
   String: Scalars['String']
+  CommitInput: CommitInput
+  Post: Post
   User: User
   PostCommit: PostCommit
-  Boolean: Scalars['Boolean']
 }
 
 export type QueryResolvers<
@@ -177,6 +213,19 @@ export type QueryResolvers<
   posts?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType>
 }
 
+export type MutationResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
+> = {
+  createPost?: Resolver<
+    Maybe<ResolversTypes['Post']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreatePostArgs, 'input'>
+  >
+  commit?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationCommitArgs, 'input'>>
+}
+
 export type PostResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']
@@ -184,7 +233,7 @@ export type PostResolvers<
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  totalCommitted?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  goal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   ownerId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   owner?: Resolver<ResolversTypes['User'], ParentType, ContextType>
   commits?: Resolver<Array<ResolversTypes['PostCommit']>, ParentType, ContextType>
@@ -221,6 +270,7 @@ export type PostCommitResolvers<
 
 export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>
+  Mutation?: MutationResolvers<ContextType>
   Post?: PostResolvers<ContextType>
   User?: UserResolvers<ContextType>
   PostCommit?: PostCommitResolvers<ContextType>

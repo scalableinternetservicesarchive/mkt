@@ -6,7 +6,7 @@ export const FETCH_POSTS = gql`
       id
       title
       description
-      totalCommitted
+      goal
       owner {
         name
       }
@@ -26,7 +26,7 @@ export const FETCH_POST = gql`
       id
       title
       description
-      totalCommitted
+      goal
       owner {
         name
       }
@@ -40,8 +40,10 @@ export const FETCH_POST = gql`
   }
 `
 
-// export const CREATE_POST = gql`
-//   mutation CreatePost($title: String!, $description: String!, $totalCommitted: Int!) {
-//     createPost(title: $title, description: $description, totalCommitted: $totalCommitted)
-//   }
-// `
+export const CREATE_POST = gql`
+  mutation CreatePost($input: CreatePostInput!) {
+    createPost(input: $input) {
+      id
+    }
+  }
+`
