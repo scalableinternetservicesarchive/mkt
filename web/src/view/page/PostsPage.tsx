@@ -23,6 +23,7 @@ interface PostsPageProps extends RouteComponentProps, AppRouteParams {}
 export function PostsPage({ postId, navigate }: PostsPageProps & Props) {
   const { user } = React.useContext(UserContext)
   const [contribution, setContribution] = useState('')
+  const [itemUrl, setItemUrl] = useState('')
   const [committing, setCommitting] = useState(false)
   const { loading, data } = useQuery<Post>(FETCH_POST, {
     variables: { postId: Number(postId) },
@@ -38,6 +39,8 @@ export function PostsPage({ postId, navigate }: PostsPageProps & Props) {
     totalCommitted += commit.amount
   })
 
+  const userIsOwner = user?.id === owner.id
+
   const tryCommit = () => {
     console.log('user in commit:', user)
     if (!user) {
@@ -47,7 +50,9 @@ export function PostsPage({ postId, navigate }: PostsPageProps & Props) {
       })
     } else {
       void commit({
-        variables: { input: { amount: Number(contribution), postId: data.post?.id, userId: user?.id } },
+        variables: {
+          input: { amount: Number(contribution), itemUrl: itemUrl, postId: data.post?.id, userId: user?.id },
+        },
       })
       setContribution('')
       setCommitting(false)
@@ -57,9 +62,22 @@ export function PostsPage({ postId, navigate }: PostsPageProps & Props) {
   return (
     <Page>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', maxWidth: 160 }}>
           <H3>Created by:</H3>
+          <Spacer $h3 />
           <UserWidget name={owner.name} />
+          {userIsOwner && (
+            <>
+              <Spacer $h3 />
+              <H3>Items to order:</H3>
+              <Spacer $h3 />
+              {commits.map(commit => (
+                <a key={commit.user.name} href={commit.itemUrl}>
+                  {commit.user.name}'s item
+                </a>
+              ))}
+            </>
+          )}
         </div>
         <div className="ma4">
           <H2>{title}</H2>
@@ -85,16 +103,27 @@ export function PostsPage({ postId, navigate }: PostsPageProps & Props) {
           <Spacer $h6 />
           {committing ? (
             <>
-              <label htmlFor="name" className="f6 b db mb2">
+              <label htmlFor="contribution" className="f6 b db mb2">
                 Amount
               </label>
               <input
-                id="name"
+                id="contribution"
                 className="input-reset ba b--black-20 pa2 mb2 db w-100"
                 type="text"
                 value={contribution}
                 onChange={e => setContribution(e.target.value)}
               />
+              <label htmlFor="url" className="f6 b db mb2">
+                Item URL
+              </label>
+              <input
+                id="url"
+                className="input-reset ba b--black-20 pa2 mb2 db w-100"
+                type="text"
+                value={itemUrl}
+                onChange={e => setItemUrl(e.target.value)}
+              />
+              <Spacer $h6 />
               <Button onClick={tryCommit}>Submit</Button>
             </>
           ) : (

@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
 export const FETCH_POSTS = gql`
-  query Posts {
-    posts {
+  query Posts($sort: SortOptions, $filter: UserFilterOptions) {
+    posts(sortOptions: $sort, filterOptions: $filter) {
       id
       title
       description
@@ -28,9 +28,11 @@ export const FETCH_POST = gql`
       description
       goal
       owner {
+        id
         name
       }
       commits {
+        itemUrl
         amount
         user {
           name

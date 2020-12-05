@@ -23,6 +23,11 @@ export interface QueryPostArgs {
   postId: Scalars['Int']
 }
 
+export interface QueryPostsArgs {
+  sortOptions?: Maybe<SortOptions>
+  filterOptions?: Maybe<UserFilterOptions>
+}
+
 export interface Mutation {
   __typename?: 'Mutation'
   createPost?: Maybe<Post>
@@ -42,18 +47,27 @@ export interface MutationCommentArgs {
   input: CommentInput
 }
 
+export interface UserFilterOptions {
+  userId: Scalars['Int']
+}
+
+export interface SortOptions {
+  field: Scalars['String']
+  ascending: Scalars['Boolean']
+}
+
 export interface CreatePostInput {
   title: Scalars['String']
   description: Scalars['String']
   goal: Scalars['Int']
   ownerId: Scalars['Int']
   merchant: Scalars['String']
-  initialContribution: Scalars['Int']
   category?: Maybe<Category>
 }
 
 export interface CommitInput {
   amount: Scalars['Int']
+  itemUrl: Scalars['String']
   postId: Scalars['Int']
   userId: Scalars['Int']
 }
@@ -92,6 +106,7 @@ export interface PostCommit {
   __typename?: 'PostCommit'
   id: Scalars['Int']
   amount: Scalars['Int']
+  itemUrl: Scalars['String']
   postId: Scalars['Int']
   post: Post
   userId: Scalars['Int']
@@ -202,8 +217,10 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>
   Mutation: ResolverTypeWrapper<{}>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
-  CreatePostInput: CreatePostInput
+  UserFilterOptions: UserFilterOptions
+  SortOptions: SortOptions
   String: ResolverTypeWrapper<Scalars['String']>
+  CreatePostInput: CreatePostInput
   CommitInput: CommitInput
   CommentInput: CommentInput
   Post: ResolverTypeWrapper<Post>
@@ -220,8 +237,10 @@ export type ResolversParentTypes = {
   Int: Scalars['Int']
   Mutation: {}
   Boolean: Scalars['Boolean']
-  CreatePostInput: CreatePostInput
+  UserFilterOptions: UserFilterOptions
+  SortOptions: SortOptions
   String: Scalars['String']
+  CreatePostInput: CreatePostInput
   CommitInput: CommitInput
   CommentInput: CommentInput
   Post: Post
@@ -236,7 +255,7 @@ export type QueryResolvers<
 > = {
   self?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>
   post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<QueryPostArgs, 'postId'>>
-  posts?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType>
+  posts?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<QueryPostsArgs, never>>
 }
 
 export type MutationResolvers<
@@ -289,6 +308,7 @@ export type PostCommitResolvers<
 > = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  itemUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   postId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   post?: Resolver<ResolversTypes['Post'], ParentType, ContextType>
   userId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
