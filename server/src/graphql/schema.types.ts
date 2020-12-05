@@ -23,6 +23,11 @@ export interface QueryPostArgs {
   postId: Scalars['Int']
 }
 
+export interface QueryPostsArgs {
+  num: Scalars['Int']
+  skip: Scalars['Int']
+}
+
 export interface Mutation {
   __typename?: 'Mutation'
   createPost?: Maybe<Post>
@@ -210,7 +215,12 @@ export type QueryResolvers<
 > = {
   self?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>
   post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<QueryPostArgs, 'postId'>>
-  posts?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType>
+  posts?: Resolver<
+    Array<ResolversTypes['Post']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryPostsArgs, 'num' | 'skip'>
+  >
 }
 
 export type MutationResolvers<

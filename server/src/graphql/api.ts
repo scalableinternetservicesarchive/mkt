@@ -24,7 +24,14 @@ export const graphqlRoot: Resolvers<Context> = {
   Query: {
     self: (_, args, ctx) => ctx.user,
     post: async (_, { postId }) => (await Post.findOne({ where: { id: postId } })) || null,
-    posts: () => Post.find(),
+    posts: (_, { num, skip }) =>
+      Post.find({
+        take: num,
+        skip: skip,
+        order: {
+          timeCreated: 'DESC',
+        },
+      }),
   },
 
   Mutation: {

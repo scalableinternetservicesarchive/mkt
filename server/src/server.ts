@@ -1,6 +1,6 @@
 require('honeycomb-beeline')({
-  writeKey: process.env.HONEYCOMB_KEY || 'd29d5f5ec24178320dae437383480737',
-  dataset: process.env.APP_NAME || 'mkt',
+  writeKey: process.env.HONEYCOMB_KEY || '1011e8fb997d3869be1707808c50db9a',
+  dataset: process.env.APP_NAME || 'mkt-edward',
   serviceName: process.env.APPSERVER_TAG || 'local',
   enabledInstrumentations: ['express', 'mysql2', 'react-dom/server'],
   sampleRate: 10,
@@ -48,7 +48,7 @@ server.express.get('/', (req, res) => {
 
 server.express.get('/app/*', (req, res) => {
   console.log('GET /app')
-  renderApp(req, res)
+  renderApp(req, res, server.executableSchema)
 })
 
 server.express.post(
@@ -211,6 +211,7 @@ server.express.post('/graphqlsubscription/disconnect', (req, res) => {
 server.express.post(
   '/graphql',
   asyncRoute(async (req, res, next) => {
+    console.log('yo')
     const authToken = req.cookies.authToken || req.header('x-authtoken')
     if (authToken) {
       const session = await Session.findOne({ where: { authToken }, relations: ['user'] })

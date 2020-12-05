@@ -17,7 +17,7 @@ type Query {
   # Returns the logged-in user making the query, or null if anonymous.
   self: User
   post(postId: Int!): Post
-  posts: [Post!]!
+  posts(num: Int!, skip: Int!): [Post!]!
 }
 
 type Mutation {

@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
 export const FETCH_POSTS = gql`
-  query Posts {
-    posts {
+  query Posts($num: Int!, $skip: Int!) {
+    posts(num: $num, skip: $skip) {
       id
       title
       description
