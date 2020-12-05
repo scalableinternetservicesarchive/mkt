@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs'
 import { PubSub } from 'graphql-yoga'
 import path from 'path'
+import { Comment } from '../entities/Comment'
 import { Post } from '../entities/Post'
 import { PostCommit } from '../entities/PostCommit'
 import { User } from '../entities/User'
@@ -55,6 +56,15 @@ export const graphqlRoot: Resolvers<Context> = {
       await commit.save()
       return true
     },
+    comment: async (_self, { input }, _ctx) => {
+      const { body, postId, userId } = input
+      const comment = new Comment()
+      comment.body = body
+      comment.user = await User.findOneOrFail({ where: { id: userId } })
+      comment.post = await Post.findOneOrFail({ where: { id: postId } })
+      await comment.save()
+      return true
+    },
   },
 
   Post: {
@@ -64,9 +74,18 @@ export const graphqlRoot: Resolvers<Context> = {
     commits: async (self, _, __) => {
       return PostCommit.find({ where: { postId: (self as any).id } }) as any
     },
+    comments: async (self, _, __) => {
+      return Comment.find({ where: { postId: (self as any).id } }) as any
+    },
   },
 
   PostCommit: {
+    user: async (self, _, __) => {
+      return User.findOne({ where: { id: (self as any).userId } }) as any
+    },
+  },
+
+  Comment: {
     user: async (self, _, __) => {
       return User.findOne({ where: { id: (self as any).userId } }) as any
     },
@@ -76,5 +95,5 @@ export const graphqlRoot: Resolvers<Context> = {
     commits: async (self, _, __) => {
       return PostCommit.find({ where: { userId: (self as any).id } }) as any
     },
-  },
+  }
 }
