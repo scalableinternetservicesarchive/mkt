@@ -25,6 +25,13 @@ export class Post extends BaseEntity implements GraphqlPost {
   timeUpdated: Date
 
   @Column({
+    type: 'longtext',
+    nullable: true,
+    default: null,
+  })
+  picture: string
+
+  @Column({
     length: 100,
     type: 'char',
   })

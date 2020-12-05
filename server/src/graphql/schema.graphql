@@ -59,6 +59,7 @@ input CommentInput {
 
 type Post {
   id: Int!
+  picture: String
   title: String!
   description: String!
   goal: Int!
@@ -72,6 +73,7 @@ type Post {
 
 type User {
   id: Int!
+  picture: String
   email: String!
   name: String!
   posts: [Post!]!
