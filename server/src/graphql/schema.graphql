@@ -17,7 +17,7 @@ type Query {
   # Returns the logged-in user making the query, or null if anonymous.
   self: User
   post(postId: Int!): Post
-  posts: [Post!]!
+  posts(sortOptions: SortOptions, filterOptions: UserFilterOptions): [Post!]!
 }
 
 type Mutation {
@@ -26,18 +26,27 @@ type Mutation {
   comment(input: CommentInput!): Boolean!
 }
 
+input UserFilterOptions {
+  userId: Int!
+}
+
+input SortOptions {
+  field: String!
+  ascending: Boolean!
+}
+
 input CreatePostInput {
   title: String!
   description: String!
   goal: Int!
   ownerId: Int!
   merchant: String!
-  initialContribution: Int!
   category: Category
 }
 
 input CommitInput {
   amount: Int!
+  itemUrl: String!
   postId: Int!
   userId: Int!
 }
@@ -73,6 +82,7 @@ type User {
 type PostCommit {
   id: Int!
   amount: Int!
+  itemUrl: String!
   postId: Int!
   post: Post!
   userId: Int!

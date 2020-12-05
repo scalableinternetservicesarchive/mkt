@@ -24,7 +24,6 @@ export function NewPost(_: NewPostProps & Props) {
   const [description, setDescription] = React.useState('')
   const [merchant, setMerchant] = React.useState('')
   const [goal, setGoal] = React.useState('')
-  const [initialContribution, setInitialContribution] = React.useState('')
   return (
     <Page>
       <Content>
@@ -70,16 +69,6 @@ export function NewPost(_: NewPostProps & Props) {
             value={goal}
             onChange={e => setGoal(e.target.value)}
           />
-          <label htmlFor="name" className="f6 b db mb2">
-            Initial contribution
-          </label>
-          <input
-            id="name"
-            className="input-reset ba b--black-20 pa2 mb2 db w-100"
-            type="text"
-            value={initialContribution}
-            onChange={e => setInitialContribution(e.target.value)}
-          />
           <Spacer $h6 />
           <Button
             onClick={() => {
@@ -91,7 +80,6 @@ export function NewPost(_: NewPostProps & Props) {
                     goal: Number(goal),
                     merchant,
                     ownerId: user?.id,
-                    initialContribution: Number(initialContribution),
                   },
                 },
               })
@@ -99,7 +87,6 @@ export function NewPost(_: NewPostProps & Props) {
               setDescription('')
               setGoal('')
               setMerchant('')
-              setInitialContribution('')
             }}
           >
             Create order

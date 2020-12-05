@@ -25,33 +25,47 @@ export const graphqlRoot: Resolvers<Context> = {
   Query: {
     self: (_, args, ctx) => ctx.user,
     post: async (_, { postId }) => (await Post.findOne({ where: { id: postId } })) || null,
-    posts: () => Post.find(),
+    posts: (_, { sortOptions, filterOptions }) => {
+      const sort =
+        sortOptions != null
+          ? {
+              order: {
+                [sortOptions.field]: sortOptions?.ascending ? 'ASC' : 'DESC',
+              },
+            }
+          : undefined
+      const filter =
+        filterOptions != null
+          ? {
+              where: {
+                ownerId: filterOptions.userId,
+              },
+            }
+          : undefined
+      return Post.find({ ...sort, ...filter })
+    },
   },
 
   Mutation: {
     createPost: async (_self, { input }, _ctx) => {
-      const { title, description, goal, merchant, ownerId, initialContribution } = input
+      const { title, description, goal, merchant, ownerId } = input
       const post = new Post()
       const owner = await User.findOneOrFail({ where: { id: ownerId } })
-      const initialCommit = new PostCommit()
-      initialCommit.amount = initialContribution
-      initialCommit.user = owner
-      initialCommit.post = post
       post.title = title
       post.description = description
       post.goal = goal
       post.merchant = merchant
-      post.commits = [initialCommit]
+      post.commits = []
       post.comments = []
       post.owner = owner
       await post.save()
-      await initialCommit.save()
       return post
     },
     commit: async (_self, { input }, _ctx) => {
-      const { amount, postId, userId } = input
+      const { amount, itemUrl, postId, userId } = input
       const commit = new PostCommit()
       commit.amount = amount
+      commit.itemUrl = itemUrl
       commit.user = await User.findOneOrFail({ where: { id: userId } })
       commit.post = await Post.findOneOrFail({ where: { id: postId } })
       await commit.save()
@@ -96,5 +110,5 @@ export const graphqlRoot: Resolvers<Context> = {
     commits: async (self, _, __) => {
       return PostCommit.find({ where: { userId: (self as any).id } }) as any
     },
-  }
+  },
 }
