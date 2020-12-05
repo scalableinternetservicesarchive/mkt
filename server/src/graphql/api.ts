@@ -42,6 +42,7 @@ export const graphqlRoot: Resolvers<Context> = {
       post.goal = goal
       post.merchant = merchant
       post.commits = [initialCommit]
+      post.comments = []
       post.owner = owner
       await post.save()
       await initialCommit.save()
