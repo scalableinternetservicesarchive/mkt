@@ -26,7 +26,7 @@ export function NavBar() {
           <>
             <a
               className="f6 mr3 dib white bg-animate hover-bg-white hover-black no-underline pv2 ph4 br-pill ba b--white-20"
-              href="/app/logout"
+              href="/app/login"
             >
               Sign Out
             </a>
