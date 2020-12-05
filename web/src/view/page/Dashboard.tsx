@@ -17,7 +17,18 @@ interface DashboardProps extends RouteComponentProps, AppRouteParams {}
 export function Dashboard({ navigate }: DashboardProps) {
   const [page, setPage] = React.useState(0)
   const { user } = useContext(UserContext)
-  const { loading, data } = useQuery<Posts>(FETCH_POSTS, { variables: { num: 10, skip: page * 10 } })
+  const [filter, setFilter] = React.useState<{ userId: number } | undefined>()
+  const { loading, data } = useQuery<Posts>(FETCH_POSTS, {
+    variables: {
+      num: 10,
+      skip: page * 10,
+      sort: {
+        field: 'timeCreated',
+        ascending: false,
+      },
+      filter,
+    },
+  })
 
   if (loading || data == null) return null
 
@@ -25,9 +36,9 @@ export function Dashboard({ navigate }: DashboardProps) {
     <Page>
       {user && (
         <Hero>
-          <Button>My Orders</Button>
+          <Button onClick={() => setFilter({ userId: user.id })}>My Orders</Button>
           <Spacer $w2 />
-          <Button>Other Orders</Button>
+          <Button onClick={() => setFilter(undefined)}>All Orders</Button>
         </Hero>
       )}
       <Content>

@@ -56,6 +56,13 @@ export interface Posts {
   posts: Posts_posts[];
 }
 
+export interface PostsVariables {
+  num: number;
+  skip: number;
+  sort?: SortOptions | null;
+  filter?: UserFilterOptions | null;
+}
+
 /* tslint:disable */
 /* eslint-disable */
 // @generated
@@ -67,6 +74,7 @@ export interface Posts {
 
 export interface Post_post_owner {
   __typename: "User";
+  id: number;
   name: string;
 }
 
@@ -77,6 +85,7 @@ export interface Post_post_commits_user {
 
 export interface Post_post_commits {
   __typename: "PostCommit";
+  itemUrl: string;
   amount: number;
   user: Post_post_commits_user;
 }
@@ -157,6 +166,7 @@ export enum Category {
 
 export interface CommitInput {
   amount: number;
+  itemUrl: string;
   postId: number;
   userId: number;
 }
@@ -167,8 +177,16 @@ export interface CreatePostInput {
   goal: number;
   ownerId: number;
   merchant: string;
-  initialContribution: number;
   category?: Category | null;
+}
+
+export interface SortOptions {
+  field: string;
+  ascending: boolean;
+}
+
+export interface UserFilterOptions {
+  userId: number;
 }
 
 //==============================================================

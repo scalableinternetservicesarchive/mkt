@@ -25,23 +25,18 @@ export const options = {
 // }
 
 export default function () {
-  // recordRates(http.get('http://localhost:3000/app/'))
-  // sleep(Math.random() * 3)
-  // recordRates(
-  //   http.post(
-  //     'http://localhost:3000/graphql',
-  //     '{"operationName":"CreatePost","variables":{"input":{"title":"oqwjd","description":"qowdija","goal":1231,"merchant":"qwoidj","ownerId":4,"initialContribution":123}},"query":"mutation CreatePost($input: CreatePostInput!) {  createPost(input: $input) {    id    __typename  }}"}',
-  //     {
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //     }
-  //   )
-  // )
+  const userId = Math.random() * 4
+  recordRates(http.get('http://localhost:3000/app/'))
+  sleep(Math.random() * 3)
+  const res = http.get('https://fakerapi.it/api/v1/products?_quantity=1&_taxes=12&_categories_type=uuid')
   recordRates(
     http.post(
       'http://localhost:3000/graphql',
-      '{"operationName":"Posts","variables":{},"query":"query Posts {  posts {    id    title    description    goal    owner {      name      __typename    }    commits {      amount      user {        name        __typename      }      __typename    }    __typename  }}"}',
+      `{"operationName":"CreatePost","variables":{"input":{"title":"${res.data.name}","description":"${
+        res.data.description
+      }","goal":${
+        Math.random() * 200 + 100
+      },"merchant":"test merchant","ownerId":${userId}}},"query":"mutation CreatePost($input: CreatePostInput!) {  createPost(input: $input) {    id    __typename  }}"}`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -49,6 +44,17 @@ export default function () {
       }
     )
   )
+  // recordRates(
+  //   http.post(
+  //     'http://localhost:3000/graphql',
+  //     '{"operationName":"Posts","variables":{},"query":"query Posts {  posts {    id    title    description    goal    owner {      name      __typename    }    commits {      amount      user {        name        __typename      }      __typename    }    __typename  }}"}',
+  //     {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //     }
+  //   )
+  // )
 }
 
 const count200 = new Counter('status_code_2xx')
