@@ -25,10 +25,7 @@ export function PostsPage({ postId, navigate }: PostsPageProps & Props) {
   const [contribution, setContribution] = useState('')
   const [itemUrl, setItemUrl] = useState('')
   const [committing, setCommitting] = useState(false)
-  const { loading, data } = useQuery<Post>(FETCH_POST, {
-    variables: { postId: Number(postId) },
-    pollInterval: 1000,
-  })
+  const { loading, data } = useQuery<Post>(FETCH_POST, { variables: { postId: Number(postId) } })
   const [commit] = useMutation<Commit>(COMMIT)
 
   if (loading || data?.post == null) return null
