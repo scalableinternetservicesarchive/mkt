@@ -229,6 +229,7 @@ export interface CommitInput {
 
 export interface CreatePostInput {
   title: string;
+  picture?: string | null;
   description: string;
   goal: number;
   ownerId: number;
