@@ -40,6 +40,8 @@ export default function () {
     }).body
   ).data.numPosts
 
+  recordRates(http.get('http://localhost:3000/app'))
+
   if (Math.random() < probabilityToPost) {
     // Generate some fake data
     const res = http.get('https://fakerapi.it/api/v1/products?_quantity=1&_taxes=12&_categories_type=uuid')
