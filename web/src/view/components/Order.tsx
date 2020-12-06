@@ -30,8 +30,8 @@ export function Order(props: OrderProps & Props) {
         })
       }}
     >
-      <UserWidget name={owner.name} picture={owner.picture} />
-      <div style={{ marginLeft: 12, flexGrow: 1 }}>
+      <UserWidget name={owner.name} />
+      <div style={{ marginLeft: 12, flex: 1 }}>
         <H2>{title}</H2>
         <p>{description}</p>
       </div>

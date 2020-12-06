@@ -17,6 +17,7 @@ export interface Query {
   self?: Maybe<User>
   post?: Maybe<Post>
   posts: Array<Post>
+  numPosts: Scalars['Int']
 }
 
 export interface QueryPostArgs {
@@ -24,6 +25,8 @@ export interface QueryPostArgs {
 }
 
 export interface QueryPostsArgs {
+  num: Scalars['Int']
+  skip: Scalars['Int']
   sortOptions?: Maybe<SortOptions>
   filterOptions?: Maybe<UserFilterOptions>
 }
@@ -257,7 +260,13 @@ export type QueryResolvers<
 > = {
   self?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>
   post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<QueryPostArgs, 'postId'>>
-  posts?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<QueryPostsArgs, never>>
+  posts?: Resolver<
+    Array<ResolversTypes['Post']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryPostsArgs, 'num' | 'skip'>
+  >
+  numPosts?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
 }
 
 export type MutationResolvers<

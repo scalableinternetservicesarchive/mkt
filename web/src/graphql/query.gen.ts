@@ -61,6 +61,8 @@ export interface Posts {
 }
 
 export interface PostsVariables {
+  num: number;
+  skip: number;
   sort?: SortOptions | null;
   filter?: UserFilterOptions | null;
 }

@@ -80,7 +80,7 @@ export function PostsPage({ postId, navigate }: PostsPageProps & Props) {
             </>
           )}
         </div>
-        <div className="ma4">
+        <div className="ma4" style={{ flex: 1 }}>
           <H2>{title}</H2>
           <BodyText>People part of this order:</BodyText>
           <Spacer $h3 />
