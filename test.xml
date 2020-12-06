@@ -37,8 +37,10 @@
 		</option>
 	</options>
 
+
 	<sessions>
-		<session name="committer" probability="90" type="ts_http">
+
+		<session name="committer" probability="60" type="ts_http">
 			<request>
 				<http url="/" version="1.1" method="GET" />
 			</request>
@@ -56,7 +58,7 @@
 			</setdynvars>
 			<!-- make a commit -->
 			<request subst="true">
-				<http url="/graphql" version="1.1" method="POST" contents='{"operationName" : null,"variables" : {},"query" :"mutation {commit(input: {amount: 10, itemUrl: \" google.com\", postId: %%_post%%, userId: %%_user_id%%})}" }'>
+				<http url="/graphql?commit=1" version="1.1" method="POST" contents='{"operationName" : null,"variables" : {},"query" :"mutation {commit(input: {amount: 10, itemUrl: \" google.com\", postId: %%_post%%, userId: %%_user_id%%})}" }'>
 					<http_header name="Content-Type" value="application/json" />
 				</http>
 			</request>
@@ -70,7 +72,45 @@
 			</setdynvars>
 			<!-- make another commit -->
 			<request subst="true">
-				<http url="/graphql" version="1.1" method="POST" contents='{"operationName" : null,"variables" : {},"query" :"mutation {commit(input: {amount: 10, itemUrl: \" google.com\", postId: %%_post%%, userId: %%_user_id%%})}" }'>
+				<http url="/graphql?commit=1" version="1.1" method="POST" contents='{"operationName" : null,"variables" : {},"query" :"mutation {commit(input: {amount: 10, itemUrl: \" google.com\", postId: %%_post%%, userId: %%_user_id%%})}" }'>
+					<http_header name="Content-Type" value="application/json" />
+				</http>
+			</request>
+		</session>
+
+    <session name="commenter" probability="30" type="ts_http">
+			<request>
+				<http url="/" version="1.1" method="GET" />
+			</request>
+			<!-- login -->
+			<setdynvars sourcetype="random_number" start="1" end="4">
+				<var name="user_id" />
+			</setdynvars>
+
+			<!-- wait ~4 seconds -->
+			<thinktime random='true' value='4' />
+
+			<!-- choose a post to comment on -->
+			<setdynvars sourcetype="random_number" start="1" end="2">
+				<var name="post" />
+			</setdynvars>
+			<!-- make a comment -->
+			<request subst="true">
+				<http url="/graphql?comment=1" version="1.1" method="POST" contents='{"operationName" : null,"variables" : {},"query" :"mutation {comment(input: {postId: %%_post%%, userId: %%_user_id%%, body: \"abcdefghijklmnopqrstuvwxyz\"})}" }'>
+					<http_header name="Content-Type" value="application/json" />
+				</http>
+			</request>
+
+			<!-- wait ~4 seconds -->
+			<thinktime random='true' value='4' />
+
+			<!-- choose a post to make a comment to -->
+			<setdynvars sourcetype="random_number" start="1" end="2">
+				<var name="post" />
+			</setdynvars>
+			<!-- make another comment -->
+			<request subst="true">
+				<http url="/graphql?comment=1" version="1.1" method="POST" contents='{"operationName" : null,"variables" : {},"query" :"mutation {comment(input: {postId: %%_post%%, userId: %%_user_id%%, body: \"abcdefghijklmnopqrstuvwxyz\"})}" }'>
 					<http_header name="Content-Type" value="application/json" />
 				</http>
 			</request>
@@ -86,10 +126,11 @@
 			</setdynvars>
 			<!-- make a post -->
 			<request subst="true">
-				<http url="/graphql" version="1.1" method="POST" contents='{"operationName":"CreatePost","variables":{"input":{"title":"test","description":"test","goal":100,"merchant":"test","ownerId":%%_user_id%%}},"query":"mutation CreatePost($input: CreatePostInput!) {\n  createPost(input: $input) {\n    id\n    __typename\n  }\n}\n"}'>
+				<http url="/graphql?post=1" version="1.1" method="POST" contents='{"operationName":"CreatePost","variables":{"input":{"title":"test","description":"test","goal":100,"merchant":"test","ownerId":%%_user_id%%}},"query":"mutation CreatePost($input: CreatePostInput!) {\n  createPost(input: $input) {\n    id\n    __typename\n  }\n}\n"}'>
 					<http_header name="Content-Type" value="application/json" />
 				</http>
 			</request>
 		</session>
+
 	</sessions>
 </tsung>
