@@ -1,6 +1,6 @@
 require('honeycomb-beeline')({
   writeKey: process.env.HONEYCOMB_KEY || '1011e8fb997d3869be1707808c50db9a',
-  dataset: process.env.APP_NAME || 'mkt-ryan',
+  dataset: process.env.APP_NAME || 'mkt-param',
   serviceName: process.env.APPSERVER_TAG || 'local',
   enabledInstrumentations: ['express', 'mysql2', 'react-dom/server'],
   sampleRate: 10,
@@ -9,6 +9,7 @@ require('honeycomb-beeline')({
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
+import DataLoader from 'dataloader'
 import { json, raw, RequestHandler, static as expressStatic } from 'express'
 import { getOperationAST, parse as parseGraphql, specifiedRules, subscribe as gqlSubscribe, validate } from 'graphql'
 import { GraphQLServer } from 'graphql-yoga'
@@ -20,6 +21,7 @@ import { checkEqual, Unpromise } from '../../common/src/util'
 import { Config } from './config'
 import { migrate } from './db/migrate'
 import { initORM } from './db/sql'
+import { Post } from './entities/Post'
 import { Session } from './entities/Session'
 import { User } from './entities/User'
 import { getSchema, graphqlRoot, pubsub } from './graphql/api'
@@ -27,10 +29,27 @@ import { ConnectionManager } from './graphql/ConnectionManager'
 import { expressLambdaProxy } from './lambda/handler'
 import { renderApp } from './render'
 
+const createPostLoader = () => {
+  return new DataLoader<number, Post>(async postIds => {
+    const posts = await Post.findByIds(postIds as number[])
+    const postIdToPost: Record<number, Post> = {}
+    posts.forEach(p => {
+      postIdToPost[p.id] = p
+    })
+
+    return postIds.map(pid => postIdToPost[pid])
+  })
+}
+
 const server = new GraphQLServer({
   typeDefs: getSchema(),
   resolvers: graphqlRoot as any,
-  context: ctx => ({ ...ctx, pubsub, user: (ctx.request as any)?.user || null }),
+  context: ctx => ({
+    ...ctx,
+    pubsub,
+    user: (ctx.request as any)?.user || null,
+    postLoader: createPostLoader(),
+  }),
 })
 
 server.express.use(cookieParser())
