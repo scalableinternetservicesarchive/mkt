@@ -4,6 +4,7 @@ export const fetchUser = gql`
   query FetchUserContext {
     self {
       id
+      picture
       name
     }
   }

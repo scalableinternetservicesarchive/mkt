@@ -10,6 +10,7 @@
 export interface FetchUserContext_self {
   __typename: "User";
   id: number;
+  picture: string | null;
   name: string;
 }
 
@@ -29,11 +30,13 @@ export interface FetchUserContext {
 export interface Posts_posts_owner {
   __typename: "User";
   name: string;
+  picture: string | null;
 }
 
 export interface Posts_posts_commits_user {
   __typename: "User";
   name: string;
+  picture: string | null;
 }
 
 export interface Posts_posts_commits {
@@ -45,6 +48,7 @@ export interface Posts_posts_commits {
 export interface Posts_posts {
   __typename: "Post";
   id: number;
+  picture: string | null;
   title: string;
   description: string;
   goal: number;
@@ -76,11 +80,13 @@ export interface Post_post_owner {
   __typename: "User";
   id: number;
   name: string;
+  picture: string | null;
 }
 
 export interface Post_post_commits_user {
   __typename: "User";
   name: string;
+  picture: string | null;
 }
 
 export interface Post_post_commits {
@@ -93,6 +99,7 @@ export interface Post_post_commits {
 export interface Post_post {
   __typename: "Post";
   id: number;
+  picture: string | null;
   title: string;
   description: string;
   goal: number;

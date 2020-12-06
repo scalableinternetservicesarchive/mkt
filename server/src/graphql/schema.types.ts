@@ -84,6 +84,7 @@ export interface CommentInput {
 export interface Post {
   __typename?: 'Post'
   id: Scalars['Int']
+  picture?: Maybe<Scalars['String']>
   title: Scalars['String']
   description: Scalars['String']
   goal: Scalars['Int']
@@ -98,6 +99,7 @@ export interface Post {
 export interface User {
   __typename?: 'User'
   id: Scalars['Int']
+  picture?: Maybe<Scalars['String']>
   email: Scalars['String']
   name: Scalars['String']
   posts: Array<Post>
@@ -286,6 +288,7 @@ export type PostResolvers<
   ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']
 > = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  picture?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   goal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
@@ -303,6 +306,7 @@ export type UserResolvers<
   ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
 > = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  picture?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   posts?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType>

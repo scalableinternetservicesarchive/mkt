@@ -17,9 +17,11 @@ export function Order(props: OrderProps & Props) {
   const navigate = useNavigate()
   const { id, title, description, goal, owner, commits } = props.post
   let totalCommitted = 0
+
   commits.forEach(commit => {
     totalCommitted += commit.amount
   })
+
   return (
     <Card
       onClick={() => {

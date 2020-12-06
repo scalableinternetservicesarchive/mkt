@@ -32,7 +32,7 @@ export function PostsPage({ postId, navigate }: PostsPageProps & Props) {
   const [commit] = useMutation<Commit>(COMMIT)
 
   if (loading || data?.post == null) return null
-  const { title, description, goal, owner, commits } = data.post
+  const { picture, title, description, goal, owner, commits } = data.post
 
   let totalCommitted = 0
   commits.forEach(commit => {
@@ -61,11 +61,12 @@ export function PostsPage({ postId, navigate }: PostsPageProps & Props) {
 
   return (
     <Page>
+      <img src={picture ? picture : undefined} />
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
         <div style={{ display: 'flex', flexDirection: 'column', maxWidth: 160 }}>
           <H3>Created by:</H3>
           <Spacer $h3 />
-          <UserWidget name={owner.name} />
+          <UserWidget name={owner.name} picture={owner.picture} />
           {userIsOwner && (
             <>
               <Spacer $h3 />
@@ -86,7 +87,7 @@ export function PostsPage({ postId, navigate }: PostsPageProps & Props) {
           <div style={{ display: 'flex', flexDirection: 'row' }}>
             {commits.map(commit => (
               <div key={commit.user.name} style={{ marginRight: 8 }}>
-                <UserWidget name={commit.user.name} small />
+                <UserWidget name={commit.user.name} picture={commit.user.picture} small />
                 <p style={{ textAlign: 'center' }}>${commit.amount}</p>
               </div>
             ))}
