@@ -96,12 +96,8 @@ export default function () {
   } else {
     const query = JSON.stringify({
       operationName: null,
-      variables: { input: {
-        user: userID,
-        post: postID,
-        body: "CouGEqOJzh9JX0gXhnPzmcaBUekgLjvK7508utfFQVZp87n7ZEK2UClInhBxAVr40yo7KmpYMEaDuVosumXHbZpswNKzdBym1uhOXnbaIhsf8T1QkdgtRQvfdIZ3WXEkbO8wJu448eJ5Js3XwOjpjtbMkwotpsgSJ0fV69glJHZpmBwShS6Crv89sMKvHJTw1Jwzei6vLPPueqo4AqoHT8GOVEO4kpPpiv5XwKb2tv58USjXBHFA34xqiVnAdDNgNZxVVROwP1QEN0L9qEtKUWdTPHWoB4sMPukCjAPw5qIHlIGKrq7O7XKLT2ZORTwzyvqkvTATKYRv8fGdTIX6KLfTy0ZM3sh2wngII0dLvANTczf6AczUXPXl8DHohpDSrBLvLHUpl96J0f4GxFCxcD5Qazr6qiMU2snyDGPAbnQiw1fCNPxebBslCTz4tECV8cSN2Tms0DdB270AvpPgkTo6fRfifhj69yFEskypXMKQa56ccGQkrDJaYSRiBoy3RcNVB0OyVLpcC1utLIx2u1Xjw2XAzHpNfUkiXq6SMyvTzLKtzinsUoKYL46sNt538LVRyQDclNGFbDk5YFYOdGc5VzbpEJrynWCnNQ1SbO3Dn7re99iywCDKL5GyiDIzSEbs07F0CG7X5jE4OQUub5XR5M5vZx8CNKIHA06IeEpxiVLc5jD9taBkO9ilVF4qvR6AH8vPCqmZeeLx82Ay5g4lLY1U5ZKE0IjOeAl43fehAaIz108nOKvAsYwXZuMuWrQyh9eF19xjrAk3srVD7hARyJVyfcc6rLtMRVEUUZXsKRjAS2fiogRasJgBFpuFWVOZAKyn1SHCYPtObhWMiHuN9j9uImnU9oL3mjmPOyJu7ylo4FJAvF5JMS4K4Ymjxcq5aM3R90izmNTaSshvs2LZlrFMKUTGyjxTwAOmTOXHQ3Hf7qAErERuE3KZlzo3FMZttAvoYjiatNCBj6nwSah7W0DLaQieYAB9NbzB"
-      }},
-      query: "mutation { comment($input: CommentInput!) }"
+      variables: {},
+      query: `mutation {comment(input: {userId: ${userID}, postId: ${postID}, body: \"abcdefghijklmnopqrstuvwxyz\"})}`
     })
     recordRates(
     http.post(
