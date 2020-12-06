@@ -185,6 +185,23 @@ export interface CommitVariables {
 // @generated
 // This file was automatically generated and should not be edited.
 
+// ====================================================
+// GraphQL mutation operation: Comment
+// ====================================================
+
+export interface Comment {
+  comment: boolean;
+}
+
+export interface CommentVariables {
+  input: CommentInput;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
 //==============================================================
 // START Enums and Input Objects
 //==============================================================
@@ -195,6 +212,12 @@ export enum Category {
   FOOD = "FOOD",
   GROCERIES = "GROCERIES",
   HOUSEWARES = "HOUSEWARES",
+}
+
+export interface CommentInput {
+  body: string;
+  postId: number;
+  userId: number;
 }
 
 export interface CommitInput {
