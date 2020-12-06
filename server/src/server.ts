@@ -211,7 +211,6 @@ server.express.post('/graphqlsubscription/disconnect', (req, res) => {
 server.express.post(
   '/graphql',
   asyncRoute(async (req, res, next) => {
-    console.log('yo')
     const authToken = req.cookies.authToken || req.header('x-authtoken')
     if (authToken) {
       const session = await Session.findOne({ where: { authToken }, relations: ['user'] })

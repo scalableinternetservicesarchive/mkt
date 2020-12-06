@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!DOCTYPE tsung SYSTEM "/usr/local/share/tsung/tsung-1.0.dtd" [
+
+]>
+<tsung loglevel="notice">
+
+	<!-- Client setup -->
+	<clients>
+		<client host="localhost" use_controller_vm="true" maxusers="15000" />
+	</clients>
+
+	<!-- Server setup (PUT AWS CREDS HERE!) -->
+	<servers>
+		<server host="localhost" port="3000" type="tcp" />
+	</servers>
+
+	<load>
+		<arrivalphase phase="1" duration="30" unit="second">
+			<users arrivalrate="4" unit="second" />
+		</arrivalphase>
+		<arrivalphase phase="2" duration="30" unit="second">
+			<users arrivalrate="8" unit="second" />
+		</arrivalphase>
+		<arrivalphase phase="3" duration="30" unit="second">
+			<users arrivalrate="16" unit="second" />
+		</arrivalphase>
+		<arrivalphase phase="4" duration="30" unit="second">
+			<users arrivalrate="32" unit="second" />
+		</arrivalphase>
+	</load>
+
+	<options>
+		<!-- Set connection timeout to 2 seconds -->
+		<option name="global_ack_timeout" value="2000"></option>
+		<option type="ts_http" name="user_agent">
+			<user_agent probability="100">Mozilla/5.0 (Windows; U; Windows NT 5.2; fr-FR; rv:1.7.8) Gecko/20050511 Firefox/1.0.4</user_agent>
+		</option>
+	</options>
+
+	<sessions>
+		<session name="committer" probability="90" type="ts_http">
+			<request>
+				<http url="/" version="1.1" method="GET" />
+			</request>
+			<!-- login -->
+			<setdynvars sourcetype="random_number" start="1" end="4">
+				<var name="user_id" />
+			</setdynvars>
+
+			<!-- wait ~4 seconds -->
+			<thinktime random='true' value='4' />
+
+			<!-- choose a post to make a commit to -->
+			<setdynvars sourcetype="random_number" start="1" end="2">
+				<var name="post" />
+			</setdynvars>
+			<!-- make a commit -->
+			<request subst="true">
+				<http url="/graphql" version="1.1" method="POST" contents='{"operationName" : null,"variables" : {},"query" :"mutation {commit(input: {amount: 10, itemUrl: \" google.com\", postId: %%_post%%, userId: %%_user_id%%})}" }'>
+					<http_header name="Content-Type" value="application/json" />
+				</http>
+			</request>
+
+			<!-- wait ~4 seconds -->
+			<thinktime random='true' value='4' />
+
+			<!-- choose a post to make a commit to -->
+			<setdynvars sourcetype="random_number" start="1" end="2">
+				<var name="post" />
+			</setdynvars>
+			<!-- make another commit -->
+			<request subst="true">
+				<http url="/graphql" version="1.1" method="POST" contents='{"operationName" : null,"variables" : {},"query" :"mutation {commit(input: {amount: 10, itemUrl: \" google.com\", postId: %%_post%%, userId: %%_user_id%%})}" }'>
+					<http_header name="Content-Type" value="application/json" />
+				</http>
+			</request>
+		</session>
+
+		<session name="poster" probability="10" type="ts_http">
+			<request>
+				<http url="/" version="1.1" method="GET" />
+			</request>
+			<!-- login -->
+			<setdynvars sourcetype="random_number" start="1" end="4">
+				<var name="user_id" />
+			</setdynvars>
+			<!-- make a post -->
+			<request subst="true">
+				<http url="/graphql" version="1.1" method="POST" contents='{"operationName":"CreatePost","variables":{"input":{"title":"test","description":"test","goal":100,"merchant":"test","ownerId":%%_user_id%%}},"query":"mutation CreatePost($input: CreatePostInput!) {\n  createPost(input: $input) {\n    id\n    __typename\n  }\n}\n"}'>
+					<http_header name="Content-Type" value="application/json" />
+				</http>
+			</request>
+		</session>
+	</sessions>
+</tsung>
