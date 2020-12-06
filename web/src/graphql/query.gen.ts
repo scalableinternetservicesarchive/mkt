@@ -10,6 +10,7 @@
 export interface FetchUserContext_self {
   __typename: "User";
   id: number;
+  picture: string | null;
   name: string;
 }
 
@@ -29,11 +30,13 @@ export interface FetchUserContext {
 export interface Posts_posts_owner {
   __typename: "User";
   name: string;
+  picture: string | null;
 }
 
 export interface Posts_posts_commits_user {
   __typename: "User";
   name: string;
+  picture: string | null;
 }
 
 export interface Posts_posts_commits {
@@ -42,18 +45,39 @@ export interface Posts_posts_commits {
   user: Posts_posts_commits_user;
 }
 
+export interface Posts_posts_comments_user {
+  __typename: "User";
+  name: string;
+  picture: string | null;
+}
+
+export interface Posts_posts_comments {
+  __typename: "Comment";
+  body: string;
+  user: Posts_posts_comments_user;
+}
+
 export interface Posts_posts {
   __typename: "Post";
   id: number;
+  picture: string | null;
   title: string;
   description: string;
   goal: number;
   owner: Posts_posts_owner;
   commits: Posts_posts_commits[];
+  comments: Posts_posts_comments[];
 }
 
 export interface Posts {
   posts: Posts_posts[];
+}
+
+export interface PostsVariables {
+  num: number;
+  skip: number;
+  sort?: SortOptions | null;
+  filter?: UserFilterOptions | null;
 }
 
 /* tslint:disable */
@@ -67,28 +91,46 @@ export interface Posts {
 
 export interface Post_post_owner {
   __typename: "User";
+  id: number;
   name: string;
+  picture: string | null;
 }
 
 export interface Post_post_commits_user {
   __typename: "User";
   name: string;
+  picture: string | null;
 }
 
 export interface Post_post_commits {
   __typename: "PostCommit";
+  itemUrl: string;
   amount: number;
   user: Post_post_commits_user;
+}
+
+export interface Post_post_comments_user {
+  __typename: "User";
+  name: string;
+  picture: string | null;
+}
+
+export interface Post_post_comments {
+  __typename: "Comment";
+  body: string;
+  user: Post_post_comments_user;
 }
 
 export interface Post_post {
   __typename: "Post";
   id: number;
+  picture: string | null;
   title: string;
   description: string;
   goal: number;
   owner: Post_post_owner;
   commits: Post_post_commits[];
+  comments: Post_post_comments[];
 }
 
 export interface Post {
@@ -157,18 +199,28 @@ export enum Category {
 
 export interface CommitInput {
   amount: number;
+  itemUrl: string;
   postId: number;
   userId: number;
 }
 
 export interface CreatePostInput {
   title: string;
+  picture?: string | null;
   description: string;
   goal: number;
   ownerId: number;
   merchant: string;
-  initialContribution: number;
   category?: Category | null;
+}
+
+export interface SortOptions {
+  field: string;
+  ascending: boolean;
+}
+
+export interface UserFilterOptions {
+  userId: number;
 }
 
 //==============================================================

@@ -17,9 +17,11 @@ export function Order(props: OrderProps & Props) {
   const navigate = useNavigate()
   const { id, title, description, goal, owner, commits } = props.post
   let totalCommitted = 0
+
   commits.forEach(commit => {
     totalCommitted += commit.amount
   })
+
   return (
     <Card
       onClick={() => {
@@ -29,7 +31,7 @@ export function Order(props: OrderProps & Props) {
       }}
     >
       <UserWidget name={owner.name} />
-      <div style={{ marginLeft: 12, flexGrow: 1 }}>
+      <div style={{ marginLeft: 12, flex: 1 }}>
         <H2>{title}</H2>
         <p>{description}</p>
       </div>

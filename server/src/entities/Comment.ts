@@ -5,13 +5,13 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm'
 import { Post } from './Post'
 import { User } from './User'
 
 @Entity()
-export class PostCommit extends BaseEntity {
+export class Comment extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 
@@ -22,14 +22,9 @@ export class PostCommit extends BaseEntity {
   timeUpdated: Date
 
   @Column({
-    type: 'text',
+    length: 1000
   })
-  itemUrl: string
-
-  @Column({
-    unsigned: true,
-  })
-  amount: number
+  body: string
 
   @Column()
   postId: number

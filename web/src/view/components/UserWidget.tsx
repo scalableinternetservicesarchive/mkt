@@ -1,12 +1,13 @@
 import * as React from 'react'
 import { style } from '../../style/styled'
 
-export function UserWidget(props: { name?: string; small?: boolean }) {
-  const { name, small } = props
+export function UserWidget(props: { name?: string; picture?: string | null; small?: boolean }) {
+  const { name, picture, small } = props
+
   return (
     <div className="tc">
       <img
-        src="/app/assets/images/blank-profile-picture.png"
+        src={picture ? picture : '/app/assets/images/blank-profile-picture.png'}
         className={small ? 'br-100 h2 w2 dib' : 'br-100 h3 w3 dib'}
         alt="avatar"
       />

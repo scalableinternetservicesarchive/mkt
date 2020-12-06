@@ -10,12 +10,9 @@ export function NavBar() {
         MKT
       </a>
       <div className="flex-grow pa3 flex items-center">
-        {/* <a className="f6 link dib white dim mr3 mr4-ns" href="#0">
-          About
-        </a> */}
         {!user ? (
           <>
-            <a className="f6 link dib white dim mr3 mr4-ns" href="#0">
+            <a className="f6 link dib white dim mr3 mr4-ns" href="/app/login">
               Sign In
             </a>
             <a

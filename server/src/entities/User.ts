@@ -5,9 +5,10 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm'
 import { User as GraphqlUser, UserType } from '../graphql/schema.types'
+import { Comment } from './Comment'
 import { Post } from './Post'
 import { PostCommit } from './PostCommit'
 
@@ -22,6 +23,13 @@ export class User extends BaseEntity implements GraphqlUser {
 
   @UpdateDateColumn()
   timeUpdated: Date
+
+  @Column({
+    type: 'longtext',
+    nullable: true,
+    default: null,
+  })
+  picture: string
 
   @Column({
     length: 100,
@@ -50,4 +58,7 @@ export class User extends BaseEntity implements GraphqlUser {
 
   @OneToMany(() => PostCommit, commit => commit.user)
   commits: PostCommit[]
+
+  @OneToMany(() => Comment, comment => comment.user)
+  comment: Comment[]
 }

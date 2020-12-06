@@ -1,10 +1,10 @@
 import { createPool, PoolConnection, QueryOptions } from 'mysql2'
 import { createConnection } from 'typeorm'
+import { Comment } from '../entities/Comment'
 import { Post } from '../entities/Post'
 import { PostCommit } from '../entities/PostCommit'
 import { Session } from '../entities/Session'
 import { User } from '../entities/User'
-// import { Friend } from '../entities/Friend'
 
 const baseConfig = {
   host: process.env.MYSQL_HOST || '127.0.0.1',
@@ -20,7 +20,7 @@ export async function initORM() {
     username: process.env.MYSQL_USER || 'root',
     synchronize: true,
     logging: false,
-    entities: [User, Session, Post, PostCommit],
+    entities: [User, Session, Post, PostCommit, Comment],
     extra: {
       connectionLimit: 5,
     },

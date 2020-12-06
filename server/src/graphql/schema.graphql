@@ -17,44 +17,72 @@ type Query {
   # Returns the logged-in user making the query, or null if anonymous.
   self: User
   post(postId: Int!): Post
-  posts: [Post!]!
+  posts(num: Int!, skip: Int!, sortOptions: SortOptions, filterOptions: UserFilterOptions): [Post!]!
+  numPosts: Int!
 }
 
 type Mutation {
   createPost(input: CreatePostInput!): Post
+  createUser(input: CreateUserInput!): User
   commit(input: CommitInput!): Boolean!
+  comment(input: CommentInput!): Boolean!
+}
+
+input UserFilterOptions {
+  userId: Int!
+}
+
+input SortOptions {
+  field: String!
+  ascending: Boolean!
 }
 
 input CreatePostInput {
   title: String!
+  picture: String
   description: String!
   goal: Int!
   ownerId: Int!
   merchant: String!
-  initialContribution: Int!
   category: Category
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  picture: String
 }
 
 input CommitInput {
   amount: Int!
+  itemUrl: String!
+  postId: Int!
+  userId: Int!
+}
+
+input CommentInput {
+  body: String!
   postId: Int!
   userId: Int!
 }
 
 type Post {
   id: Int!
+  picture: String
   title: String!
   description: String!
   goal: Int!
   ownerId: Int!
   owner: User!
   commits: [PostCommit!]!
+  comments: [Comment!]!
   category: Category!
   merchant: String!
 }
 
 type User {
   id: Int!
+  picture: String
   email: String!
   name: String!
   posts: [Post!]!
@@ -65,6 +93,16 @@ type User {
 type PostCommit {
   id: Int!
   amount: Int!
+  itemUrl: String!
+  postId: Int!
+  post: Post!
+  userId: Int!
+  user: User!
+}
+
+type Comment {
+  id: Int!
+  body: String!
   postId: Int!
   post: Post!
   userId: Int!

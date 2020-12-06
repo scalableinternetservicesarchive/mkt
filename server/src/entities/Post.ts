@@ -6,9 +6,10 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm'
 import { Category, Post as GraphqlPost } from '../graphql/schema.types'
+import { Comment } from './Comment'
 import { PostCommit } from './PostCommit'
 import { User } from './User'
 
@@ -22,6 +23,13 @@ export class Post extends BaseEntity implements GraphqlPost {
 
   @UpdateDateColumn()
   timeUpdated: Date
+
+  @Column({
+    type: 'longtext',
+    nullable: true,
+    default: null,
+  })
+  picture: string
 
   @Column({
     length: 100,
@@ -61,4 +69,8 @@ export class Post extends BaseEntity implements GraphqlPost {
 
   @OneToMany(() => PostCommit, commit => commit.post)
   commits: PostCommit[]
+
+  @OneToMany(() => Comment, comment => comment.post)
+  comments: Comment[]
+
 }

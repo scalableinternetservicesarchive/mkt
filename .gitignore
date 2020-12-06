@@ -19,3 +19,6 @@ terraform.tfstate.backup
 
 # other
 .DS_Store
+
+#terraform
+terraform/
