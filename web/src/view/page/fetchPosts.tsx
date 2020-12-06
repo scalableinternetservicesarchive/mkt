@@ -75,3 +75,9 @@ export const COMMIT = gql`
     commit(input: $input)
   }
 `
+
+export const CREATE_COMMENT = gql`
+  mutation Comment($input: CommentInput!) {
+    comment(input: $input)
+  }
+`
