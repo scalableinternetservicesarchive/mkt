@@ -1,3 +1,4 @@
+import DataLoader from 'dataloader'
 import { readFileSync } from 'fs'
 import { PubSub } from 'graphql-yoga'
 import path from 'path'
@@ -19,12 +20,14 @@ interface Context {
   request: Request
   response: Response
   pubsub: PubSub
+  postLoader: DataLoader<number, Post>
 }
 
 export const graphqlRoot: Resolvers<Context> = {
   Query: {
     self: (_, args, ctx) => ctx.user,
-    post: async (_, { postId }) => (await Post.findOne({ where: { id: postId } })) || null,
+    // post: async (_, { postId }) => (await Post.findOne({ where: { id: postId } })) || null,
+    post: async (_, { postId }, ctx) => (await ctx.postLoader.load(postId)) || null,
     posts: (_, { num, skip, sortOptions, filterOptions }) => {
       const sort =
         sortOptions != null

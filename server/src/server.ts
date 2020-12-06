@@ -1,6 +1,6 @@
 require('honeycomb-beeline')({
   writeKey: process.env.HONEYCOMB_KEY || '1011e8fb997d3869be1707808c50db9a',
-  dataset: process.env.APP_NAME || 'mkt',
+  dataset: process.env.APP_NAME || 'mkt-param',
   serviceName: process.env.APPSERVER_TAG || 'local',
   enabledInstrumentations: ['express', 'mysql2', 'react-dom/server'],
   sampleRate: 10,
@@ -22,7 +22,6 @@ import { Config } from './config'
 import { migrate } from './db/migrate'
 import { initORM } from './db/sql'
 import { Post } from './entities/Post'
-import { PostCommit } from './entities/PostCommit'
 import { Session } from './entities/Session'
 import { User } from './entities/User'
 import { getSchema, graphqlRoot, pubsub } from './graphql/api'
@@ -31,7 +30,7 @@ import { expressLambdaProxy } from './lambda/handler'
 import { renderApp } from './render'
 
 const createPostLoader = () => {
-  new DataLoader<number, Post>(async postIds => {
+  return new DataLoader<number, Post>(async postIds => {
     const posts = await Post.findByIds(postIds as number[])
     const postIdToPost: Record<number, Post> = {}
     posts.forEach(p => {
@@ -39,18 +38,6 @@ const createPostLoader = () => {
     })
 
     return postIds.map(pid => postIdToPost[pid])
-  })
-}
-
-const createCommitLoader = () => {
-  new DataLoader<number, PostCommit>(async commitIds => {
-    const commits = await PostCommit.findByIds(commitIds as number[])
-    const commitIdToCommit: Record<number, PostCommit> = {}
-    commits.forEach(c => {
-      commitIdToCommit[c.id] = c
-    })
-
-    return commitIds.map(cid => commitIdToCommit[cid])
   })
 }
 
@@ -62,7 +49,6 @@ const server = new GraphQLServer({
     pubsub,
     user: (ctx.request as any)?.user || null,
     postLoader: createPostLoader(),
-    commitLoader: createCommitLoader(),
   }),
 })
 
