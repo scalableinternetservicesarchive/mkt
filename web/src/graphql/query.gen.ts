@@ -45,6 +45,18 @@ export interface Posts_posts_commits {
   user: Posts_posts_commits_user;
 }
 
+export interface Posts_posts_comments_user {
+  __typename: "User";
+  name: string;
+  picture: string | null;
+}
+
+export interface Posts_posts_comments {
+  __typename: "Comment";
+  body: string;
+  user: Posts_posts_comments_user;
+}
+
 export interface Posts_posts {
   __typename: "Post";
   id: number;
@@ -54,6 +66,7 @@ export interface Posts_posts {
   goal: number;
   owner: Posts_posts_owner;
   commits: Posts_posts_commits[];
+  comments: Posts_posts_comments[];
 }
 
 export interface Posts {
@@ -96,6 +109,18 @@ export interface Post_post_commits {
   user: Post_post_commits_user;
 }
 
+export interface Post_post_comments_user {
+  __typename: "User";
+  name: string;
+  picture: string | null;
+}
+
+export interface Post_post_comments {
+  __typename: "Comment";
+  body: string;
+  user: Post_post_comments_user;
+}
+
 export interface Post_post {
   __typename: "Post";
   id: number;
@@ -105,6 +130,7 @@ export interface Post_post {
   goal: number;
   owner: Post_post_owner;
   commits: Post_post_commits[];
+  comments: Post_post_comments[];
 }
 
 export interface Post {
