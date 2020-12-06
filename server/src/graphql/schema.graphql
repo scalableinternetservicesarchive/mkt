@@ -18,6 +18,7 @@ type Query {
   self: User
   post(postId: Int!): Post
   posts(num: Int!, skip: Int!, sortOptions: SortOptions, filterOptions: UserFilterOptions): [Post!]!
+  numPosts: Int!
 }
 
 type Mutation {

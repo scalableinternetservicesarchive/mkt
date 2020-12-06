@@ -17,6 +17,7 @@ export interface Query {
   self?: Maybe<User>
   post?: Maybe<Post>
   posts: Array<Post>
+  numPosts: Scalars['Int']
 }
 
 export interface QueryPostArgs {
@@ -263,6 +264,7 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryPostsArgs, 'num' | 'skip'>
   >
+  numPosts?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
 }
 
 export type MutationResolvers<

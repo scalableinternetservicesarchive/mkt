@@ -44,6 +44,7 @@ export const graphqlRoot: Resolvers<Context> = {
           : undefined
       return Post.find({ take: num, skip: skip, ...sort, ...filter })
     },
+    numPosts: async () => await Post.count(),
   },
 
   Mutation: {
