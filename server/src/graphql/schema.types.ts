@@ -34,12 +34,17 @@ export interface QueryPostsArgs {
 export interface Mutation {
   __typename?: 'Mutation'
   createPost?: Maybe<Post>
+  createUser?: Maybe<User>
   commit: Scalars['Boolean']
   comment: Scalars['Boolean']
 }
 
 export interface MutationCreatePostArgs {
   input: CreatePostInput
+}
+
+export interface MutationCreateUserArgs {
+  input: CreateUserInput
 }
 
 export interface MutationCommitArgs {
@@ -61,11 +66,18 @@ export interface SortOptions {
 
 export interface CreatePostInput {
   title: Scalars['String']
+  picture?: Maybe<Scalars['String']>
   description: Scalars['String']
   goal: Scalars['Int']
   ownerId: Scalars['Int']
   merchant: Scalars['String']
   category?: Maybe<Category>
+}
+
+export interface CreateUserInput {
+  name: Scalars['String']
+  email: Scalars['String']
+  picture?: Maybe<Scalars['String']>
 }
 
 export interface CommitInput {
@@ -226,6 +238,7 @@ export type ResolversTypes = {
   SortOptions: SortOptions
   String: ResolverTypeWrapper<Scalars['String']>
   CreatePostInput: CreatePostInput
+  CreateUserInput: CreateUserInput
   CommitInput: CommitInput
   CommentInput: CommentInput
   Post: ResolverTypeWrapper<Post>
@@ -246,6 +259,7 @@ export type ResolversParentTypes = {
   SortOptions: SortOptions
   String: Scalars['String']
   CreatePostInput: CreatePostInput
+  CreateUserInput: CreateUserInput
   CommitInput: CommitInput
   CommentInput: CommentInput
   Post: Post
@@ -278,6 +292,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationCreatePostArgs, 'input'>
+  >
+  createUser?: Resolver<
+    Maybe<ResolversTypes['User']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateUserArgs, 'input'>
   >
   commit?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationCommitArgs, 'input'>>
   comment?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationCommentArgs, 'input'>>

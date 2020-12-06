@@ -5,7 +5,7 @@ import { Comment } from '../entities/Comment'
 import { Post } from '../entities/Post'
 import { PostCommit } from '../entities/PostCommit'
 import { User } from '../entities/User'
-import { Resolvers } from './schema.types'
+import { Resolvers, UserType } from './schema.types'
 
 export const pubsub = new PubSub()
 
@@ -49,10 +49,13 @@ export const graphqlRoot: Resolvers<Context> = {
 
   Mutation: {
     createPost: async (_self, { input }, _ctx) => {
-      const { title, description, goal, merchant, ownerId } = input
+      const { title, description, picture, goal, merchant, ownerId } = input
       const post = new Post()
       const owner = await User.findOneOrFail({ where: { id: ownerId } })
       post.title = title
+      if (picture != null) {
+        post.picture = picture
+      }
       post.description = description
       post.goal = goal
       post.merchant = merchant
@@ -61,6 +64,21 @@ export const graphqlRoot: Resolvers<Context> = {
       post.owner = owner
       await post.save()
       return post
+    },
+    createUser: async (_self, { input }, _ctx) => {
+      const { name, email, picture } = input
+      const user = new User()
+      user.name = name
+      user.email = email
+      if (picture != null) {
+        user.picture = picture
+      }
+      user.userType = UserType.User
+      user.posts = []
+      user.commits = []
+      user.comment = []
+      await user.save()
+      return user
     },
     commit: async (_self, { input }, _ctx) => {
       const { amount, itemUrl, postId, userId } = input
