@@ -38,6 +38,7 @@ input SortOptions {
 
 input CreatePostInput {
   title: String!
+  picture: String
   description: String!
   goal: Int!
   ownerId: Int!
