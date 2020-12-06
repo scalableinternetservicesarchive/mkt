@@ -19,6 +19,13 @@ export const FETCH_POSTS = gql`
           picture
         }
       }
+      comments {
+        body
+        user {
+          name
+          picture
+        }
+      }
     }
   }
 `
@@ -39,6 +46,13 @@ export const FETCH_POST = gql`
       commits {
         itemUrl
         amount
+        user {
+          name
+          picture
+        }
+      }
+      comments {
+        body
         user {
           name
           picture
