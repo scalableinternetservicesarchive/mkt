@@ -23,6 +23,7 @@ type Query {
 
 type Mutation {
   createPost(input: CreatePostInput!): Post
+  createUser(input: CreateUserInput!): User
   commit(input: CommitInput!): Boolean!
   comment(input: CommentInput!): Boolean!
 }
@@ -44,6 +45,12 @@ input CreatePostInput {
   ownerId: Int!
   merchant: String!
   category: Category
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  picture: String
 }
 
 input CommitInput {
