@@ -61,6 +61,7 @@ export interface SortOptions {
 
 export interface CreatePostInput {
   title: Scalars['String']
+  picture?: Maybe<Scalars['String']>
   description: Scalars['String']
   goal: Scalars['Int']
   ownerId: Scalars['Int']
