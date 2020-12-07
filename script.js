@@ -35,12 +35,12 @@ export const options = {
 // }
 
 export default function () {
-  const probabilityToPost = 0.05
-  const probabilityToCommit = 0.3
-  const score = Math.random()
+  // const probabilityToPost = 0.05
+  // const probabilityToCommit = 0.3
+  // const score = Math.random()
 
-  // choose a random user to impersonate
-  const userID = Math.round(Math.random() * 3) + 1
+  // // choose a random user to impersonate
+  // const userID = Math.round(Math.random() * 3) + 1
 
   // Count total number of posts (to be used later)
   const count = JSON.parse(
@@ -51,67 +51,69 @@ export default function () {
     }).body
   ).data.numPosts
 
-  // postID for committing/commenting
-  const postID = Math.round(Math.random() * (count - 1) + 1)
+  // // postID for committing/commenting
+  // const postID = Math.round(Math.random() * (count - 1) + 1)
 
 
-  if (score < probabilityToPost) {
-    // Generate some fake data
-    const res = http.get('https://fakerapi.it/api/v1/products?_quantity=1&_taxes=12&_categories_type=uuid')
-    const data = JSON.parse(res.body).data[0]
+  // if (score < probabilityToPost) {
+  //   // Generate some fake data
+  //   const res = http.get('https://fakerapi.it/api/v1/products?_quantity=1&_taxes=12&_categories_type=uuid')
+  //   const data = JSON.parse(res.body).data[0]
 
-    // Call gql endpoint for creating post
-    recordRates(
-      http.post(
-        'http://localhost:3000/graphql?createPost=1',
-        `{"operationName":"CreatePost","variables":{"input":{"title":"${data.name}","description":"${
-          data.description
-        }","goal":${Math.round(
-          Math.random() * 1000 + 100
-        )},"merchant":"test merchant","ownerId":${userID}}},"query":"mutation CreatePost($input: CreatePostInput!) {  createPost(input: $input) {    id    __typename  }}"}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-    )
-  } else if (score < probabilityToCommit) {
-    // Generate some fake data
-    const amt = Math.round(Math.random() * 90 + 10)
+  //   // Call gql endpoint for creating post
+  //   recordRates(
+  //     http.post(
+  //       'http://localhost:3000/graphql?createPost=1',
+  //       `{"operationName":"CreatePost","variables":{"input":{"title":"${data.name}","description":"${
+  //         data.description
+  //       }","goal":${Math.round(
+  //         Math.random() * 1000 + 100
+  //       )},"merchant":"test merchant","ownerId":${userID}}},"query":"mutation CreatePost($input: CreatePostInput!) {  createPost(input: $input) {    id    __typename  }}"}`,
+  //       {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //       }
+  //     )
+  //   )
+  // } else if (score < probabilityToCommit) {
+  //   // Generate some fake data
+  //   const amt = Math.round(Math.random() * 90 + 10)
 
-    // Call gql endpoint for committing to a post
-    const query = JSON.stringify({
-      operationName: null,
-      variables: {},
-      query: `mutation {commit(input: {amount: ${amt}, itemUrl: "google.com", postId: ${postID}, userId: ${userID}})}`,
-    })
-    recordRates(
-    http.post('http://localhost:3000/graphql?commit=1', query, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }))
-    // console.log(userId, 'committed', amt, 'to', post)
-  } else {
-    const query = JSON.stringify({
-      operationName: null,
-      variables: {},
-      query: `mutation {comment(input: {userId: ${userID}, postId: ${postID}, body: \"abcdefghijklmnopqrstuvwxyz\"})}`
-    })
-    recordRates(
-    http.post(
-      'http://localhost:3000/graphql?comment=1', query, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-    }))
-  }
+  //   // Call gql endpoint for committing to a post
+  //   const query = JSON.stringify({
+  //     operationName: null,
+  //     variables: {},
+  //     query: `mutation {commit(input: {amount: ${amt}, itemUrl: "google.com", postId: ${postID}, userId: ${userID}})}`,
+  //   })
+  //   recordRates(
+  //   http.post('http://localhost:3000/graphql?commit=1', query, {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //   }))
+  //   // console.log(userId, 'committed', amt, 'to', post)
+  // } else {
+  //   const query = JSON.stringify({
+  //     operationName: null,
+  //     variables: {},
+  //     query: `mutation {comment(input: {userId: ${userID}, postId: ${postID}, body: \"abcdefghijklmnopqrstuvwxyz\"})}`
+  //   })
+  //   recordRates(
+  //   http.post(
+  //     'http://localhost:3000/graphql?comment=1', query, {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //   }))
+  // }
 
   // Simulate user browsing posts for a bit
   for (let i = 0; i < 10; i++) {
     const post = Math.round(Math.random() * count + 1)
     recordRates(http.get('http://localhost:3000/app/post/' + post))
+    sleep(Math.random() * 2)
+    recordRates(http.get('http://localhost:3000/app/'))
     sleep(Math.random() * 2)
   }
 }
