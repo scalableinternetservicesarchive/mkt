@@ -1,6 +1,6 @@
-import DataLoader from 'dataloader'
 import { readFileSync } from 'fs'
 import { PubSub } from 'graphql-yoga'
+import { Redis } from 'ioredis'
 import path from 'path'
 import { Comment } from '../entities/Comment'
 import { Post } from '../entities/Post'
@@ -20,14 +20,25 @@ interface Context {
   request: Request
   response: Response
   pubsub: PubSub
-  postLoader: DataLoader<number, Post>
+  redis: Redis
 }
 
 export const graphqlRoot: Resolvers<Context> = {
   Query: {
     self: (_, args, ctx) => ctx.user,
     // post: async (_, { postId }) => (await Post.findOne({ where: { id: postId } })) || null,
-    post: async (_, { postId }, ctx) => (await ctx.postLoader.load(postId)) || null,
+    post: async (_, { postId }, ctx) => {
+      // (await ctx.postLoader.load(postId)) || null,
+      const exists = await ctx.redis.exists('post' + postId)
+      if (exists) {
+        const redisResponse = await ctx.redis.get('post' + postId)
+        return JSON.parse(redisResponse as string)
+      } else {
+        const post = (await Post.findOne({ where: { id: postId } })) || null
+        void ctx.redis.set('post' + postId, JSON.stringify(post), 'EX', 10)
+        return post
+      }
+    },
     posts: (_, { num, skip, sortOptions, filterOptions }) => {
       const sort =
         sortOptions != null
@@ -47,7 +58,17 @@ export const graphqlRoot: Resolvers<Context> = {
           : undefined
       return Post.find({ take: num, skip: skip, ...sort, ...filter })
     },
-    numPosts: async () => await Post.count(),
+    numPosts: async (_, __, ctx) => {
+      const exists = await ctx.redis.exists('numPosts')
+      if (exists) {
+        const redisResponse = await ctx.redis.get('numPosts')
+        return parseInt(redisResponse as string)
+      } else {
+        const count = await Post.count()
+        void ctx.redis.set('numPosts', count, 'EX', 10)
+        return count
+      }
+    },
   },
 
   Mutation: {
@@ -105,14 +126,57 @@ export const graphqlRoot: Resolvers<Context> = {
   },
 
   Post: {
-    owner: async (self, _, __) => {
-      return User.findOne({ where: { id: (self as any).ownerId } }) as any
+    owner: async (self, _, ctx) => {
+      // return User.findOne({ where: { id: (self as any).ownerId } }) as any
+      const exists = await ctx.redis.exists('user' + self.ownerId)
+
+      if (exists) {
+        const redisResponse = await ctx.redis.get('user' + self.ownerId)
+
+        return JSON.parse(redisResponse as string) as any
+      } else {
+        const user = await User.findOne({ where: { id: (self as any).ownerId } })
+        void ctx.redis.set('user' + self.ownerId, JSON.stringify(user))
+
+        return user as any
+      }
     },
-    commits: async (self, _, __) => {
-      return PostCommit.find({ where: { postId: (self as any).id } }) as any
+    commits: async (self, _, ctx) => {
+      const exists = await ctx.redis.exists('post' + self.id + '-commits')
+      if (exists) {
+        const redisResponse = (await ctx.redis.lrange('post' + self.id + '-commits', 0, -1)).map(elem =>
+          JSON.parse(elem)
+        )
+
+        return redisResponse
+      } else {
+        const commits = (await PostCommit.find({ where: { postId: (self as any).id } })) as any[]
+
+        const redisCommits = commits.map(commit => JSON.stringify(commit))
+
+        void ctx.redis.lpush('post' + self.id + '-commits', redisCommits)
+
+        return commits
+      }
     },
-    comments: async (self, _, __) => {
-      return Comment.find({ where: { postId: (self as any).id } }) as any
+    comments: async (self, _, ctx) => {
+      // return Comment.find({ where: { postId: (self as any).id } }) as any
+      const exists = await ctx.redis.exists('post' + self.id + '-comments')
+      if (exists) {
+        const redisResponse = (await ctx.redis.lrange('post' + self.id + '-comments', 0, -1)).map(elem =>
+          JSON.parse(elem)
+        )
+
+        return redisResponse
+      } else {
+        const comments = (await Comment.find({ where: { postId: (self as any).id } })) as any[]
+
+        const redisComments = comments.map(comment => JSON.stringify(comment))
+
+        void ctx.redis.lpush('post' + self.id + '-comments', redisComments)
+
+        return comments
+      }
     },
   },
 
