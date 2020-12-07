@@ -25,7 +25,7 @@ export function Order(props: OrderProps & Props) {
   return (
     <Card
       onClick={() => {
-        navigate(`post/${id}`).catch(err => {
+        navigate(`app/post/${id}`).catch(err => {
           console.log('error', err)
         })
       }}
