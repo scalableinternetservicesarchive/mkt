@@ -185,20 +185,62 @@ export const graphqlRoot: Resolvers<Context> = {
   },
 
   PostCommit: {
-    user: async (self, _, __) => {
-      return User.findOne({ where: { id: (self as any).userId } }) as any
+    user: async (self, _, ctx) => {
+      // return User.findOne({ where: { id: (self as any).userId } }) as any
+      const exists = await ctx.redis.exists('user' + self.userId)
+
+      if (exists) {
+        const redisResponse = await ctx.redis.get('user' + self.userId)
+
+        return JSON.parse(redisResponse as string) as any
+      } else {
+        const user = await User.findOne({ where: { id: (self as any).ownerId } })
+        void ctx.redis.set('user' + self.userId, JSON.stringify(user), 'EX', 60)
+
+        return user as any
+      }
     },
   },
 
   Comment: {
-    user: async (self, _, __) => {
-      return User.findOne({ where: { id: (self as any).userId } }) as any
+    user: async (self, _, ctx) => {
+      // return User.findOne({ where: { id: (self as any).userId } }) as any
+      const exists = await ctx.redis.exists('user' + self.userId)
+
+      if (exists) {
+        const redisResponse = await ctx.redis.get('user' + self.userId)
+
+        return JSON.parse(redisResponse as string) as any
+      } else {
+        const user = await User.findOne({ where: { id: (self as any).ownerId } })
+        void ctx.redis.set('user' + self.userId, JSON.stringify(user), 'EX', 60)
+
+        return user as any
+      }
     },
   },
 
   User: {
-    commits: async (self, _, __) => {
-      return PostCommit.find({ where: { userId: (self as any).id } }) as any
+    commits: async (self, _, ctx) => {
+      // return PostCommit.find({ where: { userId: (self as any).id } }) as any
+      const exists = await ctx.redis.exists('post' + self.id + '-commits')
+      if (exists) {
+        const redisResponse = (await ctx.redis.lrange('post' + self.id + '-commits', 0, -1)).map(elem =>
+          JSON.parse(elem)
+        )
+
+        return redisResponse
+      } else {
+        const commits = (await PostCommit.find({ where: { postId: (self as any).id } })) as any[]
+
+        if (commits.length != 0) {
+          const redisCommits = commits.map(commit => JSON.stringify(commit))
+
+          void ctx.redis.lpush('post' + self.id + '-commits', redisCommits)
+        }
+
+        return commits
+      }
     },
   },
 }
