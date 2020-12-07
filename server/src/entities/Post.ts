@@ -3,6 +3,9 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+
+  Index,
+
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -16,6 +19,7 @@ import { User } from './User'
 @Entity()
 export class Post extends BaseEntity implements GraphqlPost {
   @PrimaryGeneratedColumn()
+  @Index()
   id: number
 
   @CreateDateColumn()
@@ -62,6 +66,7 @@ export class Post extends BaseEntity implements GraphqlPost {
   category: Category
 
   @Column()
+  @Index()
   ownerId: number
 
   @ManyToOne(() => User, user => user.posts)

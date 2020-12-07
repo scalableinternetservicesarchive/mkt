@@ -3,9 +3,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm'
 import { Post } from './Post'
 import { User } from './User'
@@ -32,6 +33,7 @@ export class PostCommit extends BaseEntity {
   amount: number
 
   @Column()
+  @Index()
   postId: number
 
   @ManyToOne(() => Post, post => post.commits, {
@@ -40,6 +42,7 @@ export class PostCommit extends BaseEntity {
   post: Post
 
   @Column()
+  @Index()
   userId: number
 
   @ManyToOne(() => User, user => user.commits, {

@@ -3,9 +3,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+
+  Index,
+
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm'
 import { User as GraphqlUser, UserType } from '../graphql/schema.types'
 import { Comment } from './Comment'
@@ -16,6 +19,7 @@ import { PostCommit } from './PostCommit'
 export class User extends BaseEntity implements GraphqlUser {
   __typename?: 'User' | undefined
   @PrimaryGeneratedColumn()
+  @Index()
   id: number
 
   @CreateDateColumn()

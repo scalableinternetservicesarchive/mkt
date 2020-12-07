@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
@@ -13,6 +14,7 @@ import { User } from './User'
 @Entity()
 export class Comment extends BaseEntity {
   @PrimaryGeneratedColumn()
+  @Index()
   id: number
 
   @CreateDateColumn()
@@ -27,6 +29,7 @@ export class Comment extends BaseEntity {
   body: string
 
   @Column()
+  @Index()
   postId: number
 
   @ManyToOne(() => Post, post => post.commits, {
@@ -35,6 +38,7 @@ export class Comment extends BaseEntity {
   post: Post
 
   @Column()
+  @Index()
   userId: number
 
   @ManyToOne(() => User, user => user.commits, {
