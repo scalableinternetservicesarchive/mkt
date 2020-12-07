@@ -35,7 +35,7 @@ export const graphqlRoot: Resolvers<Context> = {
         return JSON.parse(redisResponse as string)
       } else {
         const post = (await Post.findOne({ where: { id: postId } })) || null
-        void ctx.redis.set('post' + postId, JSON.stringify(post), 'EX', 10)
+        void ctx.redis.set('post' + postId, JSON.stringify(post), 'EX', 60)
         return post
       }
     },
@@ -65,7 +65,7 @@ export const graphqlRoot: Resolvers<Context> = {
         return parseInt(redisResponse as string)
       } else {
         const count = await Post.count()
-        void ctx.redis.set('numPosts', count, 'EX', 10)
+        void ctx.redis.set('numPosts', count, 'EX', 60)
         return count
       }
     },
@@ -136,7 +136,7 @@ export const graphqlRoot: Resolvers<Context> = {
         return JSON.parse(redisResponse as string) as any
       } else {
         const user = await User.findOne({ where: { id: (self as any).ownerId } })
-        void ctx.redis.set('user' + self.ownerId, JSON.stringify(user))
+        void ctx.redis.set('user' + self.ownerId, JSON.stringify(user), 'EX', 60)
 
         return user as any
       }
@@ -152,9 +152,11 @@ export const graphqlRoot: Resolvers<Context> = {
       } else {
         const commits = (await PostCommit.find({ where: { postId: (self as any).id } })) as any[]
 
-        const redisCommits = commits.map(commit => JSON.stringify(commit))
+        if (commits.length != 0) {
+          const redisCommits = commits.map(commit => JSON.stringify(commit))
 
-        void ctx.redis.lpush('post' + self.id + '-commits', redisCommits)
+          void ctx.redis.lpush('post' + self.id + '-commits', redisCommits)
+        }
 
         return commits
       }
@@ -171,9 +173,11 @@ export const graphqlRoot: Resolvers<Context> = {
       } else {
         const comments = (await Comment.find({ where: { postId: (self as any).id } })) as any[]
 
-        const redisComments = comments.map(comment => JSON.stringify(comment))
+        if (comments.length != 0) {
+          const redisComments = comments.map(comment => JSON.stringify(comment))
 
-        void ctx.redis.lpush('post' + self.id + '-comments', redisComments)
+          void ctx.redis.lpush('post' + self.id + '-comments', redisComments)
+        }
 
         return comments
       }
