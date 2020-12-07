@@ -39,24 +39,42 @@ export const graphqlRoot: Resolvers<Context> = {
         return post
       }
     },
-    posts: (_, { num, skip, sortOptions, filterOptions }) => {
-      const sort =
-        sortOptions != null
-          ? {
-              order: {
-                [sortOptions.field]: sortOptions?.ascending ? 'ASC' : 'DESC',
-              },
-            }
-          : undefined
-      const filter =
-        filterOptions != null
-          ? {
-              where: {
-                ownerId: filterOptions.userId,
-              },
-            }
-          : undefined
-      return Post.find({ take: num, skip: skip, ...sort, ...filter })
+    posts: async (_, { num, skip, sortOptions, filterOptions }, ctx) => {
+      const page = skip / 10
+
+      const exists = await ctx.redis.exists('page' + page)
+
+      if (exists) {
+        const redisResponse = (await ctx.redis.lrange('page' + page, 0, -1)).map(elem => JSON.parse(elem))
+
+        return redisResponse
+      } else {
+        const sort =
+          sortOptions != null
+            ? {
+                order: {
+                  [sortOptions.field]: sortOptions?.ascending ? 'ASC' : 'DESC',
+                },
+              }
+            : undefined
+        const filter =
+          filterOptions != null
+            ? {
+                where: {
+                  ownerId: filterOptions.userId,
+                },
+              }
+            : undefined
+        const posts = await Post.find({ take: num, skip: skip, ...sort, ...filter })
+
+        if (posts.length != 0) {
+          const redisPage = posts.map(post => JSON.stringify(post))
+
+          void ctx.redis.lpush('page' + page, redisPage)
+        }
+
+        return posts
+      }
     },
     numPosts: async (_, __, ctx) => {
       const exists = await ctx.redis.exists('numPosts')
