@@ -230,7 +230,7 @@ export const graphqlRoot: Resolvers<Context> = {
 
         return JSON.parse(redisResponse as string) as any
       } else {
-        const user = await User.findOne({ where: { id: (self as any).ownerId } })
+        const user = await User.findOne({ where: { id: (self as any).userId } })
         void ctx.redis.set('user' + self.userId, JSON.stringify(user), 'EX', 60)
 
         return user as any
