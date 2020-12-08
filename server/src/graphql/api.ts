@@ -189,7 +189,7 @@ export const graphqlRoot: Resolvers<Context> = {
 
         return redisResponse
       } else {
-        const comments = (await Comment.find({ where: { postId: (self as any).id } })) as any[]
+        const comments = (await Comment.find({ where: { postId: self.id } })) as any[]
 
         if (comments.length != 0) {
           const redisComments = comments.map(comment => JSON.stringify(comment))
@@ -212,7 +212,7 @@ export const graphqlRoot: Resolvers<Context> = {
 
         return JSON.parse(redisResponse as string) as any
       } else {
-        const user = await User.findOne({ where: { id: (self as any).ownerId } })
+        const user = await User.findOne({ where: { id: self.userId } })
         void ctx.redis.set('user' + self.userId, JSON.stringify(user), 'EX', 60)
 
         return user as any
@@ -230,7 +230,7 @@ export const graphqlRoot: Resolvers<Context> = {
 
         return JSON.parse(redisResponse as string) as any
       } else {
-        const user = await User.findOne({ where: { id: (self as any).userId } })
+        const user = await User.findOne({ where: { id: self.userId } })
         void ctx.redis.set('user' + self.userId, JSON.stringify(user), 'EX', 60)
 
         return user as any
@@ -249,7 +249,7 @@ export const graphqlRoot: Resolvers<Context> = {
 
         return redisResponse
       } else {
-        const commits = (await PostCommit.find({ where: { postId: (self as any).id } })) as any[]
+        const commits = (await PostCommit.find({ where: { postId: self.id } })) as any[]
 
         if (commits.length != 0) {
           const redisCommits = commits.map(commit => JSON.stringify(commit))
