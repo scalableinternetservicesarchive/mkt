@@ -52,18 +52,18 @@ export const graphqlRoot: Resolvers<Context> = {
         const sort =
           sortOptions != null
             ? {
-                order: {
-                  [sortOptions.field]: sortOptions?.ascending ? 'ASC' : 'DESC',
-                },
-              }
+              order: {
+                [sortOptions.field]: sortOptions?.ascending ? 'ASC' : 'DESC',
+              },
+            }
             : undefined
         const filter =
           filterOptions != null
             ? {
-                where: {
-                  ownerId: filterOptions.userId,
-                },
-              }
+              where: {
+                ownerId: filterOptions.userId,
+              },
+            }
             : undefined
         const posts = await Post.find({ take: num, skip: skip, ...sort, ...filter })
 

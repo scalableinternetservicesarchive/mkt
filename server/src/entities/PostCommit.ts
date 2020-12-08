@@ -12,8 +12,10 @@ import { Post } from './Post'
 import { User } from './User'
 
 @Entity()
+// @Index(['postId', 'userId'], { unique: true })
 export class PostCommit extends BaseEntity {
   @PrimaryGeneratedColumn()
+  // @Index({ unique: true })
   id: number
 
   @CreateDateColumn()

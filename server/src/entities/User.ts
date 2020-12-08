@@ -4,7 +4,11 @@ import {
   CreateDateColumn,
   Entity,
 
+
+
   Index,
+
+
 
   OneToMany,
   PrimaryGeneratedColumn,
@@ -41,6 +45,7 @@ export class User extends BaseEntity implements GraphqlUser {
     nullable: false,
     type: 'char',
   })
+  // @Index({ unique: true })
   email: string
 
   @Column({

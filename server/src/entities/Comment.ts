@@ -11,10 +11,12 @@ import {
 import { Post } from './Post'
 import { User } from './User'
 
+
 @Entity()
+// @Index(['postId', 'userId'], { unique: true })
 export class Comment extends BaseEntity {
   @PrimaryGeneratedColumn()
-  @Index()
+  // @Index({ unique: true })
   id: number
 
   @CreateDateColumn()
