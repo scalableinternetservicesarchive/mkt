@@ -13,11 +13,12 @@ export const options = {
       ],
       gracefulRampDown: '10s',
     },
-    // constant: {
-    //   executor: 'constant-vus',
-    //   vus: 100,
-    //   duration: '60s',
-    // },
+    constant: {
+      executor: 'constant-vus',
+      vus: 100,
+      duration: '120s',
+      // gracefulRampDown: '10s',
+    },
     // shared: {
     //   executor: 'shared-iterations',
     //   startTime: '10s',
@@ -28,11 +29,6 @@ export const options = {
     // },
   },
 }
-// export const options = {
-//   scenarios: {
-//
-//   },
-// }
 
 export default function () {
   const probabilityToPost = 0.05
@@ -44,7 +40,7 @@ export default function () {
 
   // Count total number of posts (to be used later)
   const count = JSON.parse(
-    http.post('http://localhost:3000/graphql', '{"operationName":null,"variables":{},"query":"{  numPosts}"}', {
+    http.post('http://localhost:3000/graphql?getPostCount=1', '{"operationName":null,"variables":{},"query":"{  numPosts}"}', {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -111,7 +107,7 @@ export default function () {
   // Simulate user browsing posts for a bit
   for (let i = 0; i < 10; i++) {
     const post = Math.round(Math.random() * count + 1)
-    recordRates(http.get('http://localhost:3000/app/post/' + post))
+    recordRates(http.get('http://localhost:3000/app/post/' + post + '?getPost=1'))
     sleep(Math.random() * 2)
   }
 }
