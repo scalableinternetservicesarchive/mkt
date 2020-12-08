@@ -24,6 +24,13 @@ export async function initORM() {
     extra: {
       connectionLimit: 5,
     },
+    cache: {
+      type: "ioredis",
+      options: {
+        host: "localhost",
+        port: 6379
+      }
+    }
   })
 }
 

@@ -9,10 +9,10 @@ require('honeycomb-beeline')({
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
-import DataLoader from 'dataloader'
 import { json, raw, RequestHandler, static as expressStatic } from 'express'
 import { getOperationAST, parse as parseGraphql, specifiedRules, subscribe as gqlSubscribe, validate } from 'graphql'
 import { GraphQLServer } from 'graphql-yoga'
+import Redis from 'ioredis'
 import { forAwaitEach, isAsyncIterable } from 'iterall'
 import path from 'path'
 import 'reflect-metadata'
@@ -21,7 +21,6 @@ import { checkEqual, Unpromise } from '../../common/src/util'
 import { Config } from './config'
 import { migrate } from './db/migrate'
 import { initORM } from './db/sql'
-import { Post } from './entities/Post'
 import { Session } from './entities/Session'
 import { User } from './entities/User'
 import { getSchema, graphqlRoot, pubsub } from './graphql/api'
@@ -29,17 +28,7 @@ import { ConnectionManager } from './graphql/ConnectionManager'
 import { expressLambdaProxy } from './lambda/handler'
 import { renderApp } from './render'
 
-const createPostLoader = () => {
-  return new DataLoader<number, Post>(async postIds => {
-    const posts = await Post.findByIds(postIds as number[])
-    const postIdToPost: Record<number, Post> = {}
-    posts.forEach(p => {
-      postIdToPost[p.id] = p
-    })
-
-    return postIds.map(pid => postIdToPost[pid])
-  })
-}
+const redis = new Redis()
 
 const server = new GraphQLServer({
   typeDefs: getSchema(),
@@ -48,7 +37,7 @@ const server = new GraphQLServer({
     ...ctx,
     pubsub,
     user: (ctx.request as any)?.user || null,
-    postLoader: createPostLoader(),
+    redis,
   }),
 })
 

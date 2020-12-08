@@ -1,6 +1,6 @@
-import DataLoader from 'dataloader'
 import { readFileSync } from 'fs'
 import { PubSub } from 'graphql-yoga'
+import { Redis } from 'ioredis'
 import path from 'path'
 import { Comment } from '../entities/Comment'
 import { Post } from '../entities/Post'
@@ -20,34 +20,73 @@ interface Context {
   request: Request
   response: Response
   pubsub: PubSub
-  postLoader: DataLoader<number, Post>
+  redis: Redis
 }
 
 export const graphqlRoot: Resolvers<Context> = {
   Query: {
     self: (_, args, ctx) => ctx.user,
     // post: async (_, { postId }) => (await Post.findOne({ where: { id: postId } })) || null,
-    post: async (_, { postId }, ctx) => (await ctx.postLoader.load(postId)) || null,
-    posts: (_, { num, skip, sortOptions, filterOptions }) => {
-      const sort =
-        sortOptions != null
-          ? {
-              order: {
-                [sortOptions.field]: sortOptions?.ascending ? 'ASC' : 'DESC',
-              },
-            }
-          : undefined
-      const filter =
-        filterOptions != null
-          ? {
-              where: {
-                ownerId: filterOptions.userId,
-              },
-            }
-          : undefined
-      return Post.find({ take: num, skip: skip, ...sort, ...filter })
+    post: async (_, { postId }, ctx) => {
+      // (await ctx.postLoader.load(postId)) || null,
+      const exists = await ctx.redis.exists('post' + postId)
+      if (exists) {
+        const redisResponse = await ctx.redis.get('post' + postId)
+        return JSON.parse(redisResponse as string)
+      } else {
+        const post = (await Post.findOne({ where: { id: postId } })) || null
+        void ctx.redis.set('post' + postId, JSON.stringify(post), 'EX', 60)
+        return post
+      }
     },
-    numPosts: async () => await Post.count(),
+    posts: async (_, { num, skip, sortOptions, filterOptions }, ctx) => {
+      const page = skip / 10
+
+      const exists = await ctx.redis.exists('page' + page)
+
+      if (exists) {
+        const redisResponse = (await ctx.redis.lrange('page' + page, 0, -1)).map(elem => JSON.parse(elem))
+
+        return redisResponse
+      } else {
+        const sort =
+          sortOptions != null
+            ? {
+                order: {
+                  [sortOptions.field]: sortOptions?.ascending ? 'ASC' : 'DESC',
+                },
+              }
+            : undefined
+        const filter =
+          filterOptions != null
+            ? {
+                where: {
+                  ownerId: filterOptions.userId,
+                },
+              }
+            : undefined
+        const posts = await Post.find({ take: num, skip: skip, ...sort, ...filter })
+
+        if (posts.length != 0) {
+          const redisPage = posts.map(post => JSON.stringify(post))
+
+          void ctx.redis.lpush('page' + page, redisPage)
+        }
+
+        return posts
+      }
+    },
+    numPosts: async (_, __, ctx) => {
+      const exists = await ctx.redis.exists('numPosts')
+      if (exists) {
+        const redisResponse = await ctx.redis.get('numPosts')
+        return parseInt(redisResponse as string)
+      } else {
+        const count = await Post.count()
+        void ctx.redis.set('numPosts', count, 'EX', 60)
+        return count
+      }
+    },
   },
 
   Mutation: {
@@ -105,32 +144,121 @@ export const graphqlRoot: Resolvers<Context> = {
   },
 
   Post: {
-    owner: async (self, _, __) => {
-      return User.findOne({ where: { id: (self as any).ownerId } }) as any
+    owner: async (self, _, ctx) => {
+      // return User.findOne({ where: { id: (self as any).ownerId } }) as any
+      const exists = await ctx.redis.exists('user' + self.ownerId)
+
+      if (exists) {
+        const redisResponse = await ctx.redis.get('user' + self.ownerId)
+
+        return JSON.parse(redisResponse as string) as any
+      } else {
+        const user = await User.findOne({ where: { id: (self as any).ownerId } })
+        void ctx.redis.set('user' + self.ownerId, JSON.stringify(user), 'EX', 60)
+
+        return user as any
+      }
     },
-    commits: async (self, _, __) => {
-      return PostCommit.find({ where: { postId: (self as any).id } }) as any
+    commits: async (self, _, ctx) => {
+      const exists = await ctx.redis.exists('post' + self.id + '-commits')
+      if (exists) {
+        const redisResponse = (await ctx.redis.lrange('post' + self.id + '-commits', 0, -1)).map(elem =>
+          JSON.parse(elem)
+        )
+
+        return redisResponse
+      } else {
+        const commits = (await PostCommit.find({ where: { postId: (self as any).id } })) as any[]
+
+        if (commits.length != 0) {
+          const redisCommits = commits.map(commit => JSON.stringify(commit))
+
+          void ctx.redis.lpush('post' + self.id + '-commits', redisCommits)
+        }
+
+        return commits
+      }
     },
-    comments: async (self, _, __) => {
-      return Comment.find({ where: { postId: (self as any).id } }) as any
+    comments: async (self, _, ctx) => {
+      // return Comment.find({ where: { postId: (self as any).id } }) as any
+      const exists = await ctx.redis.exists('post' + self.id + '-comments')
+      if (exists) {
+        const redisResponse = (await ctx.redis.lrange('post' + self.id + '-comments', 0, -1)).map(elem =>
+          JSON.parse(elem)
+        )
+
+        return redisResponse
+      } else {
+        const comments = (await Comment.find({ where: { postId: (self as any).id } })) as any[]
+
+        if (comments.length != 0) {
+          const redisComments = comments.map(comment => JSON.stringify(comment))
+
+          void ctx.redis.lpush('post' + self.id + '-comments', redisComments)
+        }
+
+        return comments
+      }
     },
   },
 
   PostCommit: {
-    user: async (self, _, __) => {
-      return User.findOne({ where: { id: (self as any).userId } }) as any
+    user: async (self, _, ctx) => {
+      // return User.findOne({ where: { id: (self as any).userId } }) as any
+      const exists = await ctx.redis.exists('user' + self.userId)
+
+      if (exists) {
+        const redisResponse = await ctx.redis.get('user' + self.userId)
+
+        return JSON.parse(redisResponse as string) as any
+      } else {
+        const user = await User.findOne({ where: { id: (self as any).ownerId } })
+        void ctx.redis.set('user' + self.userId, JSON.stringify(user), 'EX', 60)
+
+        return user as any
+      }
     },
   },
 
   Comment: {
-    user: async (self, _, __) => {
-      return User.findOne({ where: { id: (self as any).userId } }) as any
+    user: async (self, _, ctx) => {
+      // return User.findOne({ where: { id: (self as any).userId } }) as any
+      const exists = await ctx.redis.exists('user' + self.userId)
+
+      if (exists) {
+        const redisResponse = await ctx.redis.get('user' + self.userId)
+
+        return JSON.parse(redisResponse as string) as any
+      } else {
+        const user = await User.findOne({ where: { id: (self as any).ownerId } })
+        void ctx.redis.set('user' + self.userId, JSON.stringify(user), 'EX', 60)
+
+        return user as any
+      }
     },
   },
 
   User: {
-    commits: async (self, _, __) => {
-      return PostCommit.find({ where: { userId: (self as any).id } }) as any
+    commits: async (self, _, ctx) => {
+      // return PostCommit.find({ where: { userId: (self as any).id } }) as any
+      const exists = await ctx.redis.exists('post' + self.id + '-commits')
+      if (exists) {
+        const redisResponse = (await ctx.redis.lrange('post' + self.id + '-commits', 0, -1)).map(elem =>
+          JSON.parse(elem)
+        )
+
+        return redisResponse
+      } else {
+        const commits = (await PostCommit.find({ where: { postId: (self as any).id } })) as any[]
+
+        if (commits.length != 0) {
+          const redisCommits = commits.map(commit => JSON.stringify(commit))
+
+          void ctx.redis.lpush('post' + self.id + '-commits', redisCommits)
+        }
+
+        return commits
+      }
     },
   },
 }
