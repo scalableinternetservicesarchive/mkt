@@ -16,27 +16,23 @@ export const options = {
     constant: {
       executor: 'constant-vus',
       vus: 100,
-      duration: '60s',
+      duration: '120s',
+      // gracefulRampDown: '10s',
     },
-    shared: {
-      executor: 'shared-iterations',
-      startTime: '10s',
-      gracefulStop: '5s',
-      vus: 100,
-      iterations: 500,
-      maxDuration: '10s',
-    },
+    // shared: {
+    //   executor: 'shared-iterations',
+    //   startTime: '10s',
+    //   gracefulStop: '5s',
+    //   vus: 100,
+    //   iterations: 500,
+    //   maxDuration: '10s',
+    // },
   },
 }
-// export const options = {
-//   scenarios: {
-//
-//   },
-// }
 
 export default function () {
   const probabilityToPost = 0.05
-  const probabilityToCommit = 0.6
+  const probabilityToCommit = 0.3
   const score = Math.random()
 
   // choose a random user to impersonate
@@ -112,7 +108,7 @@ export default function () {
   for (let i = 0; i < 10; i++) {
     const post = Math.round(Math.random() * count + 1)
     recordRates(http.get('http://localhost:3000/app/post/' + post + '?getPost=1'))
-    sleep(Math.random())
+    sleep(Math.random() * 2)
   }
 }
 
