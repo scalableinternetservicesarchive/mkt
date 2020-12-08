@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
 export const FETCH_POSTS = gql`
-  query Posts($num: Int!, $skip: Int!, $sort: SortOptions, $filter: UserFilterOptions) {
-    posts(num: $num, skip: $skip, sortOptions: $sort, filterOptions: $filter) {
+  query Posts($num: Int!, $skip: Int!, $sortKey: String!, $sortDir: Boolean!, $filter: UserFilterOptions) {
+    posts(num: $num, skip: $skip, sortKey: $sortKey, sortDir: $sortDir, filterOptions: $filter) {
       id
       picture
       title

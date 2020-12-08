@@ -76,7 +76,8 @@ export interface Posts {
 export interface PostsVariables {
   num: number;
   skip: number;
-  sort?: SortOptions | null;
+  sortKey: string;
+  sortDir: boolean;
   filter?: UserFilterOptions | null;
 }
 
@@ -235,11 +236,6 @@ export interface CreatePostInput {
   ownerId: number;
   merchant: string;
   category?: Category | null;
-}
-
-export interface SortOptions {
-  field: string;
-  ascending: boolean;
 }
 
 export interface UserFilterOptions {

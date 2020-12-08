@@ -27,7 +27,8 @@ export interface QueryPostArgs {
 export interface QueryPostsArgs {
   num: Scalars['Int']
   skip: Scalars['Int']
-  sortOptions?: Maybe<SortOptions>
+  sortKey: Scalars['String']
+  sortDir: Scalars['Boolean']
   filterOptions?: Maybe<UserFilterOptions>
 }
 
@@ -57,11 +58,6 @@ export interface MutationCommentArgs {
 
 export interface UserFilterOptions {
   userId: Scalars['Int']
-}
-
-export interface SortOptions {
-  field: Scalars['String']
-  ascending: Scalars['Boolean']
 }
 
 export interface CreatePostInput {
@@ -232,11 +228,10 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>
   Int: ResolverTypeWrapper<Scalars['Int']>
-  Mutation: ResolverTypeWrapper<{}>
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
-  UserFilterOptions: UserFilterOptions
-  SortOptions: SortOptions
   String: ResolverTypeWrapper<Scalars['String']>
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
+  Mutation: ResolverTypeWrapper<{}>
+  UserFilterOptions: UserFilterOptions
   CreatePostInput: CreatePostInput
   CreateUserInput: CreateUserInput
   CommitInput: CommitInput
@@ -253,11 +248,10 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Query: {}
   Int: Scalars['Int']
-  Mutation: {}
-  Boolean: Scalars['Boolean']
-  UserFilterOptions: UserFilterOptions
-  SortOptions: SortOptions
   String: Scalars['String']
+  Boolean: Scalars['Boolean']
+  Mutation: {}
+  UserFilterOptions: UserFilterOptions
   CreatePostInput: CreatePostInput
   CreateUserInput: CreateUserInput
   CommitInput: CommitInput
@@ -278,7 +272,7 @@ export type QueryResolvers<
     Array<ResolversTypes['Post']>,
     ParentType,
     ContextType,
-    RequireFields<QueryPostsArgs, 'num' | 'skip'>
+    RequireFields<QueryPostsArgs, 'num' | 'skip' | 'sortKey' | 'sortDir'>
   >
   numPosts?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
 }

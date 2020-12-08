@@ -17,7 +17,7 @@ type Query {
   # Returns the logged-in user making the query, or null if anonymous.
   self: User
   post(postId: Int!): Post
-  posts(num: Int!, skip: Int!, sortOptions: SortOptions, filterOptions: UserFilterOptions): [Post!]!
+  posts(num: Int!, skip: Int!, sortKey: String!, sortDir: Boolean!, filterOptions: UserFilterOptions): [Post!]!
   numPosts: Int!
 }
 
@@ -32,10 +32,10 @@ input UserFilterOptions {
   userId: Int!
 }
 
-input SortOptions {
-  field: String!
-  ascending: Boolean!
-}
+#input SortOptions {
+#  field: String!
+#  ascending: Boolean!
+#}
 
 input CreatePostInput {
   title: String!

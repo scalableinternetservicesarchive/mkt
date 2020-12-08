@@ -12,7 +12,7 @@ import { AppRouteParams } from '../nav/route'
 import { FETCH_POSTS } from './fetchPosts'
 import { Page } from './Page'
 
-interface DashboardProps extends RouteComponentProps, AppRouteParams {}
+interface DashboardProps extends RouteComponentProps, AppRouteParams { }
 
 export function Dashboard({ navigate }: DashboardProps) {
   const [page, setPage] = React.useState(0)
@@ -22,10 +22,12 @@ export function Dashboard({ navigate }: DashboardProps) {
     variables: {
       num: 10,
       skip: page * 10,
-      sort: {
-        field: 'timeCreated',
-        ascending: false,
-      },
+      sortKey: 'post.timeCreated',
+      sortDir: false,
+      // sort: {
+      //   [field: string] : 'post.timeCreated',
+      //   ascending: false,
+      // },
       filter,
     },
   })
