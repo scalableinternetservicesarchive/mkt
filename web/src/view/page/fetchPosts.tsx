@@ -13,20 +13,6 @@ export const FETCH_POSTS = gql`
         name
         picture
       }
-      commits {
-        amount
-        user {
-          name
-          picture
-        }
-      }
-      comments {
-        body
-        user {
-          name
-          picture
-        }
-      }
     }
   }
 `

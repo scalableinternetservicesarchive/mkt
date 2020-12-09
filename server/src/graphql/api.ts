@@ -215,7 +215,7 @@ export const graphqlRoot: Resolvers<Context> = {
         `INSERT INTO \`post_commit\` (\`amount\`, \`itemUrl\`, \`postId\`, \`userId\`) VALUES (${amount}, '${itemUrl}', ${postId}, ${userId})`
       )
       void ctx.redis.lpush(`post${postId}-commits`, JSON.stringify(commit))
-      await query(`UPDATE \`post\` SET fulfilled = ${post.goal + amount} WHERE id = post.id`)
+      await query(`UPDATE \`post\` SET fulfilled = ${post.fulfilled + amount} WHERE id = ${post.id}`)
       // commit.user = await getUser(ctx.redis, userId)
       // commit.post = await getPost(ctx.redis, postId)
       // commit.user = await User.findOneOrFail({ where: { id: userId } })
