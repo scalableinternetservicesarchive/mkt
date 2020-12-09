@@ -8,7 +8,7 @@ export const options = {
       executor: 'ramping-vus',
       startVUs: 0,
       stages: [
-        { duration: '60s', target: 250 },
+        { duration: '60s', target: 100 },
         { duration: '60s', target: 0 },
       ],
       gracefulRampDown: '10s',
@@ -31,7 +31,7 @@ export const options = {
 }
 
 export default function () {
-  const probabilityToPost = 0.05
+  const probabilityToPost = 0.0
   const probabilityToCommit = 0.3
   const score = Math.random()
 
@@ -40,16 +40,19 @@ export default function () {
 
   // Count total number of posts (to be used later)
   const count = JSON.parse(
-    http.post('http://localhost:3000/graphql?getPostCount=1', '{"operationName":null,"variables":{},"query":"{  numPosts}"}', {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }).body
+    http.post(
+      'http://localhost:3000/graphql?getPostCount=1',
+      '{"operationName":null,"variables":{},"query":"{  numPosts}"}',
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    ).body
   ).data.numPosts
 
   // postID for committing/commenting
   const postID = Math.round(Math.random() * (count - 1) + 1)
-
 
   if (score < probabilityToPost) {
     // Generate some fake data
@@ -83,25 +86,26 @@ export default function () {
       query: `mutation {commit(input: {amount: ${amt}, itemUrl: "google.com", postId: ${postID}, userId: ${userID}})}`,
     })
     recordRates(
-    http.post('http://localhost:3000/graphql?commit=1', query, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }))
+      http.post('http://localhost:3000/graphql?commit=1', query, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+    )
     // console.log(userId, 'committed', amt, 'to', post)
   } else {
     const query = JSON.stringify({
       operationName: null,
       variables: {},
-      query: `mutation {comment(input: {userId: ${userID}, postId: ${postID}, body: \"abcdefghijklmnopqrstuvwxyz\"})}`
+      query: `mutation {comment(input: {userId: ${userID}, postId: ${postID}, body: \"abcdefghijklmnopqrstuvwxyz\"})}`,
     })
     recordRates(
-    http.post(
-      'http://localhost:3000/graphql?comment=1', query, {
+      http.post('http://localhost:3000/graphql?comment=1', query, {
         headers: {
           'Content-Type': 'application/json',
         },
-    }))
+      })
+    )
   }
 
   // Simulate user browsing posts for a bit

@@ -6,6 +6,7 @@ import { H2, H4 } from '../../style/header'
 import { style } from '../../style/styled'
 import { UserWidget } from '../components/UserWidget'
 import { AppRouteParams } from '../nav/route'
+import { lerpColor } from '../utils'
 
 interface Props {
   post: Posts_posts
@@ -15,7 +16,7 @@ interface OrderProps extends RouteComponentProps, AppRouteParams {}
 
 export function Order(props: OrderProps & Props) {
   const navigate = useNavigate()
-  const { id, title, description, goal, owner, commits } = props.post
+  const { id, title, description, goal, owner, commits, picture } = props.post
   let totalCommitted = 0
 
   commits.forEach(commit => {
@@ -39,19 +40,31 @@ export function Order(props: OrderProps & Props) {
         <PieChart
           style={{ height: 100, width: 100 }}
           data={[
-            { title: `Fulfilled: $${totalCommitted}`, value: totalCommitted, color: '#E38627' },
-            { title: `Goal: $${goal}`, value: goal, color: '#bfbfbf' },
+            {
+              title: `Fulfilled: $${totalCommitted}`,
+              value: totalCommitted,
+              color: goal > totalCommitted ? lerpColor('#bb1111', '#ffff11', totalCommitted / goal) : '#2a2',
+            },
+            { title: `Goal: $${goal - totalCommitted}`, value: Math.max(goal - totalCommitted, 0), color: '#bfbfbf' },
           ]}
-          // reveal={percentage}
           startAngle={-90}
           radius={30}
           lineWidth={30}
-          paddingAngle={5}
+          paddingAngle={0}
         />
         <H4 style={{ textAlign: 'center' }}>
-          ${totalCommitted}/${goal}
+          ${totalCommitted} / ${goal}
         </H4>
       </div>
+      <div
+        style={{
+          width: 100,
+          height: 100,
+          marginRight: 12,
+          backgroundImage: picture ? `url(${picture})` : undefined,
+          backgroundSize: 'cover',
+        }}
+      />
     </Card>
   )
 }

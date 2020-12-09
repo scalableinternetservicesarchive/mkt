@@ -16,7 +16,7 @@ export const Button: React.FC<Props> = (props: Props) => {
   return <ButtonBase {...props} />
 }
 
-const ButtonBase = style<'a', ButtonProps>('a', 'pointer link dim br3 ph3 pv2 black', p => {
+const ButtonBase = style<'a', ButtonProps>('a', 'pointer link dim br2 ba border-box ph3 pv2 black', p => {
   // return {}
   // const { $color, $filled, $width, onClick, $small, $block } = p
 
@@ -31,7 +31,7 @@ const ButtonBase = style<'a', ButtonProps>('a', 'pointer link dim br3 ph3 pv2 bl
   // const colBg = $filled ? fg : 'transparent'
 
   return {
-    backgroundColor: Colors[p.$color || 'lemon'],
+    backgroundColor: Colors[p.$color || 'snow'],
     // display: p.$block ? 'block' : 'inline',
     //   backgroundColor: colBg,
     //   border: `1px solid ${colBorder}`,

@@ -9,6 +9,7 @@ export enum Route {
   POSTS = 'app/post/:postId',
   NEW_POST = 'app/newPost',
   LOGIN = 'app/login',
+  SIGNUP = 'app/signup',
   PROFILE = 'app/profile',
   LECTURES = 'app/lectures',
   PROJECTS = 'app/projects',

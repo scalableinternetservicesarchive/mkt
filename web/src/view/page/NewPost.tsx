@@ -6,11 +6,10 @@ import { Button } from '../../style/button'
 import { Spacer } from '../../style/spacer'
 import { style } from '../../style/styled'
 import { UserContext } from '../auth/user'
+import { PictureUpload } from '../components/PictureUpload'
 import { AppRouteParams } from '../nav/route'
 import { CREATE_POST } from './fetchPosts'
 import { Page } from './Page'
-// import { CREATE_POST } from './fetchPosts'
-
 interface Props {
   postId?: number
 }
@@ -24,8 +23,13 @@ export function NewPost(_: NewPostProps & Props) {
   const [description, setDescription] = React.useState('')
   const [merchant, setMerchant] = React.useState('')
   const [goal, setGoal] = React.useState('')
+  const [file, setFile] = React.useState<string | null>(null)
+
+  if (file) console.log(file)
+
   return (
     <Page>
+      <PictureUpload onUpload={setFile} />
       <Content>
         <LContent>
           <label htmlFor="name" className="f6 b db mb2">
@@ -80,6 +84,7 @@ export function NewPost(_: NewPostProps & Props) {
                     goal: Number(goal),
                     merchant,
                     ownerId: user?.id,
+                    picture: file,
                   },
                 },
               })
