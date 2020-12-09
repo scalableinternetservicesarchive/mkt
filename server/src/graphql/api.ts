@@ -2,6 +2,7 @@ import { readFileSync } from 'fs'
 import { PubSub } from 'graphql-yoga'
 import { Redis } from 'ioredis'
 import path from 'path'
+import { query } from '../db/sql'
 import { Comment } from '../entities/Comment'
 import { Post } from '../entities/Post'
 import { PostCommit } from '../entities/PostCommit'
@@ -122,23 +123,31 @@ export const graphqlRoot: Resolvers<Context> = {
       await user.save()
       return user
     },
-    commit: async (_self, { input }, _ctx) => {
+    commit: async (_self, { input }, ctx) => {
       const { amount, itemUrl, postId, userId } = input
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       const commit = new PostCommit()
       commit.amount = amount
       commit.itemUrl = itemUrl
       commit.user = await User.findOneOrFail({ where: { id: userId } })
       commit.post = await Post.findOneOrFail({ where: { id: postId } })
-      await commit.save()
+      await query(
+        `INSERT INTO \`post_commit\` (\`amount\`, \`itemUrl\`, \`postId\`, \`userId\`) VALUES (${amount}, '${itemUrl}', ${postId}, ${userId})`
+      )
+      void ctx.redis.lpush(`post${postId}-commits`, JSON.stringify(commit))
+      // await commit.save()
       return true
     },
-    comment: async (_self, { input }, _ctx) => {
+    comment: async (_self, { input }, ctx) => {
       const { body, postId, userId } = input
       const comment = new Comment()
       comment.body = body
       comment.user = await User.findOneOrFail({ where: { id: userId } })
       comment.post = await Post.findOneOrFail({ where: { id: postId } })
-      await comment.save()
+      // await comment.save()
+      await query(`INSERT INTO \`comment\`(\`body\`, \`postId\`, \`userId\`) VALUES ('${body}', ${postId}, ${userId})`)
+      void ctx.redis.lpush(`post${postId}-comments`, JSON.stringify(comment))
       return true
     },
   },
@@ -160,7 +169,7 @@ export const graphqlRoot: Resolvers<Context> = {
       }
     },
     commits: async (self, _, ctx) => {
-      const exists = await ctx.redis.exists('post' + self.id + '-commits')
+      const exists = false //await ctx.redis.exists('post' + self.id + '-commits')
       if (exists) {
         const redisResponse = (await ctx.redis.lrange('post' + self.id + '-commits', 0, -1)).map(elem =>
           JSON.parse(elem)
