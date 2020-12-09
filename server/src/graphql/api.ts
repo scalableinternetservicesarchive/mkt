@@ -154,38 +154,17 @@ export const graphqlRoot: Resolvers<Context> = {
     },
     commit: async (_self, { input }, ctx) => {
       const { amount, itemUrl, postId, userId } = input
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const commit = new PostCommit()
-      commit.amount = amount
-      commit.itemUrl = itemUrl
-      const [user, post] = await Promise.all([getUser(ctx.redis, userId), getPost(ctx.redis, postId)])
-      commit.user = user
-      commit.post = post
       await query(
         `INSERT INTO \`post_commit\` (\`amount\`, \`itemUrl\`, \`postId\`, \`userId\`) VALUES (${amount}, '${itemUrl}', ${postId}, ${userId})`
       )
-      void ctx.redis.lpush(`post${postId}-commits`, JSON.stringify(commit))
-      // commit.user = await getUser(ctx.redis, userId)
-      // commit.post = await getPost(ctx.redis, postId)
-      // commit.user = await User.findOneOrFail({ where: { id: userId } })
-      // commit.post = await Post.findOneOrFail({ where: { id: postId } })
-      // void ctx.redis.lpush('post' + postId + '-commits', JSON.stringify(commit))
+      // Cache invalidation
+      void ctx.redis.del(`post${postId}-commits`)
       return true
     },
     comment: async (_self, { input }, ctx) => {
       const { body, postId, userId } = input
-      const comment = new Comment()
-      comment.body = body
-      const [user, post] = await Promise.all([getUser(ctx.redis, userId), getPost(ctx.redis, postId)])
-      comment.user = user
-      comment.post = post
       await query(`INSERT INTO \`comment\`(\`body\`, \`postId\`, \`userId\`) VALUES ('${body}', ${postId}, ${userId})`)
-      void ctx.redis.lpush(`post${postId}-comments`, JSON.stringify(comment))
-      // comment.user = await getUser(ctx.redis, userId)
-      // comment.post = await getPost(ctx.redis, postId)
-      // comment.user = await User.findOneOrFail({ where: { id: userId } })
-      // comment.post = await Post.findOneOrFail({ where: { id: postId } })
+      void ctx.redis.del(`post${postId}-comments`)
       return true
     },
   },
@@ -215,7 +194,7 @@ export const graphqlRoot: Resolvers<Context> = {
     },
     comments: async (self, _, ctx) => {
       // return Comment.find({ where: { postId: (self as any).id } }) as any
-      const exists = await ctx.redis.exists('post' + self.id + '-comments')
+      const exists = false // await ctx.redis.exists('post' + self.id + '-comments')
       if (exists) {
         const redisResponse = (await ctx.redis.lrange('post' + self.id + '-comments', 0, -1)).map(elem =>
           JSON.parse(elem)

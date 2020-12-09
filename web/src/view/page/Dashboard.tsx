@@ -85,7 +85,7 @@ export function Dashboard({ navigate }: DashboardProps) {
               }}
               onClick={() => {
                 if (navigate == null) return
-                navigate('newPost').catch(err => {
+                navigate('newPost/').catch(err => {
                   console.log('error', err)
                 })
               }}

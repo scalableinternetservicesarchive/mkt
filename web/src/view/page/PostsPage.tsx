@@ -3,16 +3,17 @@ import { RouteComponentProps } from '@reach/router'
 import * as React from 'react'
 import { useState } from 'react'
 import { PieChart } from 'react-minimal-pie-chart'
-import { Commit, Post } from '../../graphql/query.gen'
+import { Comment, Commit, Post } from '../../graphql/query.gen'
 import { Button } from '../../style/button'
 import { H2, H3 } from '../../style/header'
 import { Spacer } from '../../style/spacer'
 import { BodyText } from '../../style/text'
 import { UserContext } from '../auth/user'
+import CommentCard from '../components/CommentCard'
 import { UserWidget } from '../components/UserWidget'
 import { AppRouteParams } from '../nav/route'
 import { lerpColor } from '../utils'
-import { COMMIT, FETCH_POST } from './fetchPosts'
+import { COMMIT, CREATE_COMMENT, FETCH_POST } from './fetchPosts'
 import { Page } from './Page'
 
 interface Props {
@@ -26,12 +27,14 @@ export function PostsPage({ postId, navigate }: PostsPageProps & Props) {
   const { user } = React.useContext(UserContext)
   const [contribution, setContribution] = useState('')
   const [itemUrl, setItemUrl] = useState('')
+  const [currentComment, setCurrentComment] = useState('')
   const [committing, setCommitting] = useState(false)
   const { loading, data } = useQuery<Post>(FETCH_POST, { variables: { postId: Number(postId) } })
   const [commit] = useMutation<Commit>(COMMIT)
+  const [submitComment] = useMutation<Comment>(CREATE_COMMENT)
 
   if (loading || data?.post == null) return null
-  const { picture, title, description, goal, owner, commits } = data.post
+  const { picture, title, description, goal, owner, commits, comments } = data.post
 
   let totalCommitted = 0
   commits.forEach(commit => {
@@ -154,6 +157,39 @@ export function PostsPage({ postId, navigate }: PostsPageProps & Props) {
             <Button onClick={() => setCommitting(true)}>Join this order</Button>
           )}
         </div>
+      </div>
+      <Spacer $h3 />
+      <H2>Comments</H2>
+      <Spacer $h3 />
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+        <textarea
+          style={{ width: 500, marginBottom: 8 }}
+          className="input-reset ba b--black-20 pa2 mb2 db w-100"
+          value={currentComment}
+          onChange={e => setCurrentComment(e.target.value)}
+        />
+        <Button
+          onClick={() => {
+            void submitComment({
+              variables: {
+                input: {
+                  body: currentComment,
+                  postId: Number(postId),
+                  userId: user?.id,
+                },
+              },
+            })
+            setCurrentComment('')
+          }}
+        >
+          Comment
+        </Button>
+      </div>
+      <Spacer $h3 />
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {comments.map((comment, i) => (
+          <CommentCard key={i} comment={comment} />
+        ))}
       </div>
     </Page>
   )
