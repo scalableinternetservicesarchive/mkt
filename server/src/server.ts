@@ -42,8 +42,8 @@ const server = new GraphQLServer({
 })
 
 server.express.use(cookieParser())
-server.express.use(json())
 server.express.use(raw())
+server.express.use(json({ limit: '50mb' }))
 server.express.use('/app', cors(), expressStatic(path.join(__dirname, '../../public')))
 
 const asyncRoute = (fn: RequestHandler) => (...args: Parameters<RequestHandler>) =>

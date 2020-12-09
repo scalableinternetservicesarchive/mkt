@@ -4,6 +4,7 @@ import * as React from 'react'
 import { useContext } from 'react'
 import { Posts } from '../../graphql/query.gen'
 import { Button } from '../../style/button'
+import { H1 } from '../../style/header'
 import { Spacer } from '../../style/spacer'
 import { style } from '../../style/styled'
 import { UserContext } from '../auth/user'
@@ -36,6 +37,8 @@ export function Dashboard({ navigate }: DashboardProps) {
     <Page>
       {user && (
         <Hero>
+          <H1>Orders</H1>
+          <Spacer $h3 />
           <Button onClick={() => setFilter({ userId: user.id })}>My Orders</Button>
           <Spacer $w2 />
           <Button onClick={() => setFilter(undefined)}>All Orders</Button>
@@ -46,7 +49,13 @@ export function Dashboard({ navigate }: DashboardProps) {
           <Order key={post.id} post={post} />
         ))}
         <div
-          style={{ display: 'flex', flexDirection: 'row', flexFlow: 'row-reverse', justifyContent: 'space-between' }}
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            flexFlow: 'row-reverse',
+            justifyContent: 'space-between',
+            marginBottom: 24,
+          }}
         >
           <Button
             onClick={() => {

@@ -9,6 +9,7 @@ import { FetchUserContext } from '../graphql/query.gen'
 import { style } from '../style/styled'
 import { fetchUser } from './auth/fetchUser'
 import { Login } from './auth/Login'
+import { SignUp } from './auth/SignUp'
 import { UserContext, UserCtx } from './auth/user'
 import { Route } from './nav/route'
 import { Dashboard } from './page/Dashboard'
@@ -54,6 +55,7 @@ export function AppBody() {
         <PostsPage path={Route.POSTS} />
         <NewPost path={Route.NEW_POST} />
         <Login path={Route.LOGIN} />
+        <SignUp path={Route.SIGNUP} />
       </Router>
       <Footer>
         <FooterText>© 2020 MKT</FooterText>

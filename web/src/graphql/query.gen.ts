@@ -24,6 +24,28 @@ export interface FetchUserContext {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: CreateUser
+// ====================================================
+
+export interface CreateUser_createUser {
+  __typename: "User";
+  id: number;
+}
+
+export interface CreateUser {
+  createUser: CreateUser_createUser | null;
+}
+
+export interface CreateUserVariables {
+  input: CreateUserInput;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: Posts
 // ====================================================
 
@@ -235,6 +257,12 @@ export interface CreatePostInput {
   ownerId: number;
   merchant: string;
   category?: Category | null;
+}
+
+export interface CreateUserInput {
+  name: string;
+  email: string;
+  picture?: string | null;
 }
 
 export interface SortOptions {

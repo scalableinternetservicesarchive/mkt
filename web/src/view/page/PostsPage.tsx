@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@apollo/client'
 import { RouteComponentProps } from '@reach/router'
 import * as React from 'react'
 import { useState } from 'react'
+import { PieChart } from 'react-minimal-pie-chart'
 import { Commit, Post } from '../../graphql/query.gen'
 import { Button } from '../../style/button'
 import { H2, H3 } from '../../style/header'
@@ -10,6 +11,7 @@ import { BodyText } from '../../style/text'
 import { UserContext } from '../auth/user'
 import { UserWidget } from '../components/UserWidget'
 import { AppRouteParams } from '../nav/route'
+import { lerpColor } from '../utils'
 import { COMMIT, FETCH_POST } from './fetchPosts'
 import { Page } from './Page'
 
@@ -58,9 +60,18 @@ export function PostsPage({ postId, navigate }: PostsPageProps & Props) {
 
   return (
     <Page>
-      <img src={picture ? picture : undefined} />
+      <div
+        style={{
+          width: 300,
+          height: 300,
+          marginRight: 12,
+          backgroundColor: '#eee',
+          backgroundImage: picture ? `url(${picture})` : undefined,
+          backgroundSize: 'cover',
+        }}
+      />
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', maxWidth: 160 }}>
+        <div className="ma4" style={{ display: 'flex', flexDirection: 'column', maxWidth: 160 }}>
           <H3>Created by:</H3>
           <Spacer $h3 />
           <UserWidget name={owner.name} picture={owner.picture} />
@@ -77,11 +88,11 @@ export function PostsPage({ postId, navigate }: PostsPageProps & Props) {
             </>
           )}
         </div>
-        <div className="ma4" style={{ flex: 1 }}>
+        <div className="ma4" style={{ maxWidth: 500 }}>
           <H2>{title}</H2>
           <BodyText>People part of this order:</BodyText>
           <Spacer $h3 />
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
             {commits.map(commit => (
               <div key={commit.user.name} style={{ marginRight: 8 }}>
                 <UserWidget name={commit.user.name} picture={commit.user.picture} small />
@@ -93,7 +104,22 @@ export function PostsPage({ postId, navigate }: PostsPageProps & Props) {
           <H2>Description:</H2>
           <BodyText>{description}</BodyText>
         </div>
-        <div className="pa4">
+        <div className="ma4">
+          <PieChart
+            style={{ height: 100, width: 100 }}
+            data={[
+              {
+                title: `Fulfilled: $${totalCommitted}`,
+                value: totalCommitted,
+                color: goal > totalCommitted ? lerpColor('#bb1111', '#ffff11', totalCommitted / goal) : '#2a2',
+              },
+              { title: `Goal: $${goal - totalCommitted}`, value: Math.max(goal - totalCommitted, 0), color: '#bfbfbf' },
+            ]}
+            startAngle={-90}
+            radius={30}
+            lineWidth={30}
+            paddingAngle={0}
+          />
           <H2>
             ${totalCommitted} / ${goal}
           </H2>

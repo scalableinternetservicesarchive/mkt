@@ -10,7 +10,7 @@ import { handleError } from '../toast/error'
 import { toastErr } from '../toast/toast'
 import { UserContext } from './user'
 
-export function Login(_props: RouteComponentProps) {
+export function Login({ navigate }: RouteComponentProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [err, setError] = useState({ email: false, password: false })
@@ -35,7 +35,9 @@ export function Login(_props: RouteComponentProps) {
         check(res.ok, 'response status ' + res.status)
         return res.text()
       })
-      .then(() => window.location.reload())
+      .then(() => {
+        if (navigate) void navigate('/app/')
+      })
       .catch(err => {
         toastErr(err.toString())
         setError({ email: true, password: true })
@@ -43,7 +45,11 @@ export function Login(_props: RouteComponentProps) {
   }
 
   if (user) {
-    return <Logout />
+    return (
+      <Page>
+        <Logout />
+      </Page>
+    )
   }
 
   return (
@@ -61,7 +67,7 @@ export function Login(_props: RouteComponentProps) {
         <Input $hasError={err.password} $onChange={setPassword} $onSubmit={login} name="password" type="password" />
       </div>
       <div className="mt3">
-        <Button onClick={login}>Sign Up</Button>
+        <Button onClick={login}>Log in</Button>
       </div>
     </Page>
   )
@@ -93,7 +99,7 @@ function validateEmail(email: string) {
   return re.test(String(email).toLowerCase())
 }
 
-function validate(
+export function validate(
   email: string,
   password: string,
   setError: React.Dispatch<React.SetStateAction<{ email: boolean; password: boolean }>>
