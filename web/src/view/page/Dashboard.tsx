@@ -23,10 +23,12 @@ export function Dashboard({ navigate }: DashboardProps) {
     variables: {
       num: 10,
       skip: page * 10,
-      sort: {
-        field: 'timeCreated',
-        ascending: false,
-      },
+      sortKey: 'post.timeCreated',
+      sortDir: false,
+      // sort: {
+      //   [field: string] : 'post.timeCreated',
+      //   ascending: false,
+      // },
       filter,
     },
   })

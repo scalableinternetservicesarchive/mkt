@@ -2,6 +2,7 @@ import { readFileSync } from 'fs'
 import { PubSub } from 'graphql-yoga'
 import { Redis } from 'ioredis'
 import path from 'path'
+import { getRepository } from 'typeorm'
 import { query } from '../db/sql'
 import { Comment } from '../entities/Comment'
 import { Post } from '../entities/Post'
@@ -22,23 +23,29 @@ async function getUser(redis: Redis, id: number) {
 
   if (exists) {
     const redisResponse = await redis.get(key)
+    // console.log(redisResponse)
     return JSON.parse(redisResponse as string) as any
   } else {
-    const user = await User.findOne({ where: { id: id } })
+    const user = await getRepository(User)
+      .createQueryBuilder('user')
+      .where('user.id = :id_par', { id_par: id })
+      .getOne()
+    // const user = await User.findOne({ where: { id: id } })
     void redis.set(key, JSON.stringify(user), 'EX', 60)
-    return user
+    return user as any
   }
 }
 
 async function getPost(redis: Redis, id: number) {
   const key = `post${id}`
+  await redis.del(key)
   const exists = await redis.exists(key)
 
   if (exists) {
     const redisResponse = await redis.get(key)
     return JSON.parse(redisResponse as string) as any
   } else {
-    const post = await Post.findOne({ where: { id: id } })
+    const post = await Post.createQueryBuilder('post').where('post.id = :id_par', { id_par: id }).getOne()
     void redis.set(key, JSON.stringify(post), 'EX', 60)
     return post
   }
@@ -55,10 +62,9 @@ interface Context {
 export const graphqlRoot: Resolvers<Context> = {
   Query: {
     self: (_, args, ctx) => ctx.user,
-    // post: async (_, { postId }) => (await Post.findOne({ where: { id: postId } })) || null,
+    // post: async (_, { postId }) =Response> (await Post.findOne({ where: { id: postId } })) || null,
     post: async (_, { postId }, ctx) => {
       return getPost(ctx.redis, postId)
-      // (await ctx.postLoader.load(postId)) || null,
       // const exists = await ctx.redis.exists('post' + postId)
       // if (exists) {
       //   const redisResponse = await ctx.redis.get('post' + postId)
@@ -69,7 +75,20 @@ export const graphqlRoot: Resolvers<Context> = {
       //   return post
       // }
     },
-    posts: async (_, { num, skip, sortOptions, filterOptions }, ctx) => {
+    numPosts: async (_, __, ctx) => {
+      const exists = await ctx.redis.exists('numPosts')
+      if (exists) {
+        const redisResponse = await ctx.redis.get('numPosts')
+        return parseInt(redisResponse as string)
+      } else {
+        const query = await Post.createQueryBuilder('post').select('COUNT(*)', 'count').getRawOne()
+        const count = parseInt(query['count'])
+        console.log(count)
+        void ctx.redis.set('numPosts', count, 'EX', 60)
+        return count
+      }
+    },
+    posts: async (_, { num, skip, sortKey, sortDir, filterOptions }, ctx) => {
       const page = skip / 10
 
       // const exists = await ctx.redis.exists('page' + page)
@@ -79,23 +98,37 @@ export const graphqlRoot: Resolvers<Context> = {
 
       //   return redisResponse
       // } else {
-      const sort =
-        sortOptions != null
-          ? {
-              order: {
-                [sortOptions.field]: sortOptions?.ascending ? 'ASC' : 'DESC',
-              },
-            }
-          : undefined
-      const filter =
-        filterOptions != null
-          ? {
-              where: {
-                ownerId: filterOptions.userId,
-              },
-            }
-          : undefined
-      const posts = await Post.find({ take: num, skip: skip, ...sort, ...filter })
+      // const sort =
+      //   sortOptions != null
+      //     ? {
+      //       [sortOptions.field]: sortOptions.ascending ? "ASC" : "DESC"
+      //     }
+      //     :
+      // let sort = new Map()
+
+      // for some reason orderBy didn't like being given a declared map object?
+      // const sortKey_param = sortKey != null
+      //   ? sortKey : "post.timeUpdated"
+      // const sortDir_param = sortDir != null
+      //   ? sortDir ? "ASC" : "DESC"
+      //   : "DESC"
+      // const sort =
+      // {
+      //   "post.timeUpdated": "ASC"
+      // }
+      // const filter =
+      //   filterOptions != null
+      //     ? `post.ownerId = ${filterOptions.userId}`
+      //     : '1=1'
+      const posts = await Post.createQueryBuilder()
+        // .orderBy(sortKey_param, sortDir_param)
+        .select('post')
+        .from(Post, 'post')
+        // .where(filter)
+        .skip(skip)
+        .limit(num)
+        .getMany()
+      // const posts = await Post.find({ take: num, skip: skip, ...sort, ...filter })
 
       if (posts.length != 0) {
         const redisPage = posts.map(post => JSON.stringify(post))
@@ -106,19 +139,7 @@ export const graphqlRoot: Resolvers<Context> = {
       return posts
       // }
     },
-    numPosts: async (_, __, ctx) => {
-      const exists = await ctx.redis.exists('numPosts')
-      if (exists) {
-        const redisResponse = await ctx.redis.get('numPosts')
-        return parseInt(redisResponse as string)
-      } else {
-        const count = await Post.count()
-        void ctx.redis.set('numPosts', count, 'EX', 60)
-        return count
-      }
-    },
   },
-
   Mutation: {
     createPost: async (_self, { input }, _ctx) => {
       const { title, description, picture, goal, merchant, ownerId } = input
@@ -130,6 +151,7 @@ export const graphqlRoot: Resolvers<Context> = {
       }
       post.description = description
       post.goal = goal
+      post.fulfilled = 0
       post.merchant = merchant
       post.commits = []
       post.comments = []
@@ -148,7 +170,7 @@ export const graphqlRoot: Resolvers<Context> = {
       user.userType = UserType.User
       user.posts = []
       user.commits = []
-      user.comment = []
+      user.comments = []
       await user.save()
       return user
     },
@@ -157,6 +179,10 @@ export const graphqlRoot: Resolvers<Context> = {
       await query(
         `INSERT INTO \`post_commit\` (\`amount\`, \`itemUrl\`, \`postId\`, \`userId\`) VALUES (${amount}, '${itemUrl}', ${postId}, ${userId})`
       )
+
+      const post_fullfilled = (await query(`SELECT fulfilled FROM post WHERE id = ${postId}`))[0].fulfilled
+
+      await query(`UPDATE \`post\` SET fulfilled = ${post_fullfilled + amount} WHERE id = ${postId}`)
       // Cache invalidation
       void ctx.redis.del(`post${postId}-commits`)
       return true
@@ -181,8 +207,10 @@ export const graphqlRoot: Resolvers<Context> = {
         )
         return redisResponse
       } else {
-        const commits = (await PostCommit.find({ where: { postId: (self as any).id } })) as any[]
-
+        // const commits = (await PostCommit.find({ where: { postId: (self as any).id } })) as any[]
+        const commits = await PostCommit.createQueryBuilder('commit')
+          .where('commit.postId = :id', { id: self.id })
+          .getMany()
         if (commits.length != 0) {
           const redisCommits = commits.map(commit => JSON.stringify(commit))
 
@@ -202,8 +230,10 @@ export const graphqlRoot: Resolvers<Context> = {
 
         return redisResponse
       } else {
-        const comments = (await Comment.find({ where: { postId: self.id } })) as any[]
-
+        // const comments = (await Comment.find({ where: { postId: self.id } })) as any[]
+        const comments = await Comment.createQueryBuilder('comment')
+          .where('comment.postId = :id', { id: self.id })
+          .getMany()
         if (comments.length != 0) {
           const redisComments = comments.map(comment => JSON.stringify(comment))
 
@@ -238,8 +268,10 @@ export const graphqlRoot: Resolvers<Context> = {
 
         return redisResponse
       } else {
-        const commits = (await PostCommit.find({ where: { postId: self.id } })) as any[]
-
+        // const commits = (await PostCommit.find({ where: { userId: self.id } })) as any[]
+        const commits = await PostCommit.createQueryBuilder('commit')
+          .where('commit.userId = :id', { id: self.id })
+          .getMany()
         if (commits.length != 0) {
           const redisCommits = commits.map(commit => JSON.stringify(commit))
 

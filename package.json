@@ -48,6 +48,7 @@
     "styletron-react": "^5.2.7",
     "subscriptions-transport-ws": "^0.9.18",
     "tslib": "^2.0.1",
+    "typeorm": "^0.2.29",
     "uuid": "^8.3.0"
   },
   "devDependencies": {

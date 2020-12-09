@@ -55,6 +55,11 @@ export class Post extends BaseEntity implements GraphqlPost {
   goal: number
 
   @Column({
+    unsigned: true,
+  })
+  fulfilled: number
+
+  @Column({
     type: 'enum',
     enum: Category,
     default: Category.Housewares,
@@ -72,5 +77,4 @@ export class Post extends BaseEntity implements GraphqlPost {
 
   @OneToMany(() => Comment, comment => comment.post)
   comments: Comment[]
-
 }
