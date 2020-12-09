@@ -29,7 +29,7 @@ export class Comment extends BaseEntity {
   @Column()
   postId: number
 
-  @ManyToOne(() => Post, post => post.commits, {
+  @ManyToOne(() => Post, post => post.comments, {
     cascade: true,
   })
   post: Post
@@ -37,7 +37,7 @@ export class Comment extends BaseEntity {
   @Column()
   userId: number
 
-  @ManyToOne(() => User, user => user.commits, {
+  @ManyToOne(() => User, user => user.comments, {
     cascade: true,
   })
   user: User

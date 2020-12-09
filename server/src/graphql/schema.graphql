@@ -22,7 +22,7 @@ type Query {
 }
 
 type Mutation {
-  createPost(input: CreatePostInput!): Post
+  createPost(input: CreatePostInput!): Boolean!
   createUser(input: CreateUserInput!): User
   commit(input: CommitInput!): Boolean!
   comment(input: CommentInput!): Boolean!
@@ -87,6 +87,7 @@ type User {
   name: String!
   posts: [Post!]!
   commits: [PostCommit!]!
+  comments: [Comment!]!
   userType: UserType!
 }
 

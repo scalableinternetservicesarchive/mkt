@@ -173,13 +173,8 @@ export interface PostVariables {
 // GraphQL mutation operation: CreatePost
 // ====================================================
 
-export interface CreatePost_createPost {
-  __typename: "Post";
-  id: number;
-}
-
 export interface CreatePost {
-  createPost: CreatePost_createPost | null;
+  createPost: boolean;
 }
 
 export interface CreatePostVariables {

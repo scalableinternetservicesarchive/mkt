@@ -34,7 +34,7 @@ export interface QueryPostsArgs {
 
 export interface Mutation {
   __typename?: 'Mutation'
-  createPost?: Maybe<Post>
+  createPost: Scalars['Boolean']
   createUser?: Maybe<User>
   commit: Scalars['Boolean']
   comment: Scalars['Boolean']
@@ -112,6 +112,7 @@ export interface User {
   name: Scalars['String']
   posts: Array<Post>
   commits: Array<PostCommit>
+  comments: Array<Comment>
   userType: UserType
 }
 
@@ -282,7 +283,7 @@ export type MutationResolvers<
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = {
   createPost?: Resolver<
-    Maybe<ResolversTypes['Post']>,
+    ResolversTypes['Boolean'],
     ParentType,
     ContextType,
     RequireFields<MutationCreatePostArgs, 'input'>
@@ -325,6 +326,7 @@ export type UserResolvers<
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   posts?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType>
   commits?: Resolver<Array<ResolversTypes['PostCommit']>, ParentType, ContextType>
+  comments?: Resolver<Array<ResolversTypes['Comment']>, ParentType, ContextType>
   userType?: Resolver<ResolversTypes['UserType'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }

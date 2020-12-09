@@ -31,7 +31,7 @@ export const options = {
 }
 
 export default function () {
-  const probabilityToPost = 0.0
+  const probabilityToPost = 1
   const probabilityToCommit = 0.3
   const score = Math.random()
 
@@ -50,7 +50,7 @@ export default function () {
       }
     ).body
   ).data.numPosts
-
+  console.log(count)
   // postID for committing/commenting
   const postID = Math.round(Math.random() * (count - 1) + 1)
 
