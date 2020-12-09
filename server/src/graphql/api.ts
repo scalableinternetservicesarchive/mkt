@@ -23,14 +23,16 @@ async function getUser(redis: Redis, id: number) {
 
   if (exists) {
     const redisResponse = await redis.get(key)
-    return JSON.parse(redisResponse as string)
+    // console.log(redisResponse)
+    return JSON.parse(redisResponse as string) as any
   } else {
     const user = await getRepository(User)
       .createQueryBuilder("user")
       .where("user.id = :id_par", { id_par: id })
       .getOne()
+    // const user = await User.findOne({ where: { id: id } })
     void redis.set(key, JSON.stringify(user), 'EX', 60)
-    return user
+    return user as any
   }
 }
 
@@ -296,15 +298,13 @@ export const graphqlRoot: Resolvers<Context> = {
 
   PostCommit: {
     user: async (self, _, ctx) => {
-      const user = await getUser(ctx.redis, self.userId)
-      return user
+      return getUser(ctx.redis, self.userId)
     },
   },
 
   Comment: {
     user: async (self, _, ctx) => {
-      const user = await getUser(ctx.redis, self.userId)
-      return user
+      return getUser(ctx.redis, self.userId)
     },
   },
 
