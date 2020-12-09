@@ -260,20 +260,12 @@ export interface CreatePostInput {
   category?: Category | null;
 }
 
-<<<<<<< HEAD
-=======
 export interface CreateUserInput {
   name: string;
   email: string;
   picture?: string | null;
 }
 
-export interface SortOptions {
-  field: string;
-  ascending: boolean;
-}
-
->>>>>>> main
 export interface UserFilterOptions {
   userId: number;
 }

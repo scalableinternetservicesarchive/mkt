@@ -2,11 +2,8 @@ import { readFileSync } from 'fs'
 import { PubSub } from 'graphql-yoga'
 import { Redis } from 'ioredis'
 import path from 'path'
-<<<<<<< HEAD
-import { getConnection, getRepository } from "typeorm"
-=======
+import { getRepository } from 'typeorm'
 import { query } from '../db/sql'
->>>>>>> main
 import { Comment } from '../entities/Comment'
 import { Post } from '../entities/Post'
 import { PostCommit } from '../entities/PostCommit'
@@ -26,9 +23,12 @@ async function getUser(redis: Redis, id: number) {
 
   if (exists) {
     const redisResponse = await redis.get(key)
-    return JSON.parse(redisResponse as string) as any
+    return JSON.parse(redisResponse as string)
   } else {
-    const user = await User.findOne({ where: { id: id } })
+    const user = await getRepository(User)
+      .createQueryBuilder("user")
+      .where("user.id = :id_par", { id_par: id })
+      .getOne()
     void redis.set(key, JSON.stringify(user), 'EX', 60)
     return user
   }
@@ -42,7 +42,10 @@ async function getPost(redis: Redis, id: number) {
     const redisResponse = await redis.get(key)
     return JSON.parse(redisResponse as string) as any
   } else {
-    const post = await Post.findOne({ where: { id: id } })
+    const post = await Post
+      .createQueryBuilder("post")
+      .where("post.id = :id_par", { id_par: id })
+      .getOne()
     void redis.set(key, JSON.stringify(post), 'EX', 60)
     return post
   }
@@ -62,26 +65,6 @@ export const graphqlRoot: Resolvers<Context> = {
     // post: async (_, { postId }) =Response> (await Post.findOne({ where: { id: postId } })) || null,
     post: async (_, { postId }, ctx) => {
       return getPost(ctx.redis, postId)
-      // (await ctx.postLoader.load(postId)) || null,
-<<<<<<< HEAD
-      const exists = await ctx.redis.exists('post' + postId)
-      if (exists) {
-        const redisResponse = await ctx.redis.get('post' + postId)
-        return JSON.parse(redisResponse as string)
-      } else {
-        const post = await getConnection()
-          .createQueryBuilder()
-          .select("post")
-          .from(Post, "post")
-          .where("post.id = :id", { id: postId })
-          .getOne()
-          || null
-        // console.log(post)
-        // const post = (await Post.findOne({ where: { id: postId } })) || null
-        void ctx.redis.set('post' + postId, JSON.stringify(post), 'EX', 60)
-        return post
-      }
-=======
       // const exists = await ctx.redis.exists('post' + postId)
       // if (exists) {
       //   const redisResponse = await ctx.redis.get('post' + postId)
@@ -91,94 +74,6 @@ export const graphqlRoot: Resolvers<Context> = {
       //   void ctx.redis.set('post' + postId, JSON.stringify(post), 'EX', 60)
       //   return post
       // }
->>>>>>> main
-    },
-    posts: async (_, { num, skip, sortKey, sortDir, filterOptions }, ctx) => {
-      const page = skip / 10
-
-<<<<<<< HEAD
-      const exists = await ctx.redis.exists('page' + page)
-
-      if (exists) {
-        const redisResponse = (await ctx.redis.lrange('page' + page, 0, -1)).map(elem => JSON.parse(elem))
-
-        return redisResponse
-      } else {
-        // const sort =
-        //   sortOptions != null
-        //     ? {
-        //       [sortOptions.field]: sortOptions.ascending ? "ASC" : "DESC"
-        //     }
-        //     :
-        // let sort = new Map()
-
-        // for some reason orderBy didn't like being given a declared map object?
-        // const sortKey_param = sortKey != null
-        //   ? sortKey : "post.timeUpdated"
-        // const sortDir_param = sortDir != null
-        //   ? sortDir ? "ASC" : "DESC"
-        //   : "DESC"
-        // const sort =
-        // {
-        //   "post.timeUpdated": "ASC"
-        // }
-        // const filter =
-        //   filterOptions != null
-        //     ? `post.ownerId = ${filterOptions.userId}`
-        //     : '1=1'
-        const posts = await getConnection()
-          .createQueryBuilder()
-          // .orderBy(sortKey_param, sortDir_param)
-          .select("post")
-          .from(Post, "post")
-          // .where(filter)
-          .skip(skip)
-          .limit(num)
-          .getMany()
-        // const posts = await Post.find({ take: num, skip: skip, ...sort, ...filter })
-
-        if (posts.length != 0) {
-          const redisPage = posts.map(post => JSON.stringify(post))
-
-          void ctx.redis.lpush('page' + page, redisPage)
-        }
-
-        return posts
-=======
-      // const exists = await ctx.redis.exists('page' + page)
-
-      // if (exists) {
-      //   const redisResponse = (await ctx.redis.lrange('page' + page, 0, -1)).map(elem => JSON.parse(elem))
-
-      //   return redisResponse
-      // } else {
-      const sort =
-        sortOptions != null
-          ? {
-              order: {
-                [sortOptions.field]: sortOptions?.ascending ? 'ASC' : 'DESC',
-              },
-            }
-          : undefined
-      const filter =
-        filterOptions != null
-          ? {
-              where: {
-                ownerId: filterOptions.userId,
-              },
-            }
-          : undefined
-      const posts = await Post.find({ take: num, skip: skip, ...sort, ...filter })
-
-      if (posts.length != 0) {
-        const redisPage = posts.map(post => JSON.stringify(post))
-
-        void ctx.redis.lpush('page' + page, redisPage)
->>>>>>> main
-      }
-
-      return posts
-      // }
     },
     numPosts: async (_, __, ctx) => {
       const exists = await ctx.redis.exists('numPosts')
@@ -186,7 +81,7 @@ export const graphqlRoot: Resolvers<Context> = {
         const redisResponse = await ctx.redis.get('numPosts')
         return parseInt(redisResponse as string)
       } else {
-        const query = await getRepository(Post)
+        const query = await Post
           .createQueryBuilder("post")
           .select("COUNT(*)", "count")
           .getRawOne()
@@ -196,8 +91,59 @@ export const graphqlRoot: Resolvers<Context> = {
         return count
       }
     },
-  },
+    posts: async (_, { num, skip, sortKey, sortDir, filterOptions }, ctx) => {
+      const page = skip / 10
 
+      // const exists = await ctx.redis.exists('page' + page)
+
+      // if (exists) {
+      //   const redisResponse = (await ctx.redis.lrange('page' + page, 0, -1)).map(elem => JSON.parse(elem))
+
+      //   return redisResponse
+      // } else {
+      // const sort =
+      //   sortOptions != null
+      //     ? {
+      //       [sortOptions.field]: sortOptions.ascending ? "ASC" : "DESC"
+      //     }
+      //     :
+      // let sort = new Map()
+
+      // for some reason orderBy didn't like being given a declared map object?
+      // const sortKey_param = sortKey != null
+      //   ? sortKey : "post.timeUpdated"
+      // const sortDir_param = sortDir != null
+      //   ? sortDir ? "ASC" : "DESC"
+      //   : "DESC"
+      // const sort =
+      // {
+      //   "post.timeUpdated": "ASC"
+      // }
+      // const filter =
+      //   filterOptions != null
+      //     ? `post.ownerId = ${filterOptions.userId}`
+      //     : '1=1'
+      const posts = await Post
+        .createQueryBuilder()
+        // .orderBy(sortKey_param, sortDir_param)
+        .select("post")
+        .from(Post, "post")
+        // .where(filter)
+        .skip(skip)
+        .limit(num)
+        .getMany()
+      // const posts = await Post.find({ take: num, skip: skip, ...sort, ...filter })
+
+      if (posts.length != 0) {
+        const redisPage = posts.map(post => JSON.stringify(post))
+
+        void ctx.redis.lpush('page' + page, redisPage)
+      }
+
+      return posts
+      // }
+    },
+  },
   Mutation: {
     createPost: async (_self, { input }, _ctx) => {
       const { title, description, picture, goal, merchant, ownerId } = input
@@ -227,13 +173,12 @@ export const graphqlRoot: Resolvers<Context> = {
       user.userType = UserType.User
       user.posts = []
       user.commits = []
-      user.comment = []
+      user.comments = []
       await user.save()
       return user
     },
     commit: async (_self, { input }, ctx) => {
       const { amount, itemUrl, postId, userId } = input
-<<<<<<< HEAD
       // // const commit = new PostCommit()
       // commit.amount = amount
       // commit.itemUrl = itemUrl
@@ -248,20 +193,19 @@ export const graphqlRoot: Resolvers<Context> = {
       //   .where("post.id = postId")
       //   .getOne()
       // maybe check for nulls here?
-      await getConnection()
-        .createQueryBuilder()
-        .insert()
-        .into(PostCommit)
-        .values([{
-          amount: amount,
-          itemUrl: itemUrl,
-          postId: postId,
-          userId: userId,
-          // post: post,
-          // user: user
-        }])
-        .execute()
-=======
+      // await getConnection()
+      //   .createQueryBuilder()
+      //   .insert()
+      //   .into(PostCommit)
+      //   .values([{
+      //     amount: amount,
+      //     itemUrl: itemUrl,
+      //     postId: postId,
+      //     userId: userId,
+      //     // post: post,
+      //     // user: user
+      //   }])
+      // .execute()
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const commit = new PostCommit()
@@ -279,7 +223,6 @@ export const graphqlRoot: Resolvers<Context> = {
       // commit.user = await User.findOneOrFail({ where: { id: userId } })
       // commit.post = await Post.findOneOrFail({ where: { id: postId } })
       // void ctx.redis.lpush('post' + postId + '-commits', JSON.stringify(commit))
->>>>>>> main
       return true
     },
     comment: async (_self, { input }, ctx) => {
@@ -311,8 +254,11 @@ export const graphqlRoot: Resolvers<Context> = {
         )
         return redisResponse
       } else {
-        const commits = (await PostCommit.find({ where: { postId: (self as any).id } })) as any[]
-
+        // const commits = (await PostCommit.find({ where: { postId: (self as any).id } })) as any[]
+        const commits = await PostCommit
+          .createQueryBuilder("commit")
+          .where("commit.postId = :id", { id: self.id })
+          .getMany()
         if (commits.length != 0) {
           const redisCommits = commits.map(commit => JSON.stringify(commit))
 
@@ -332,8 +278,11 @@ export const graphqlRoot: Resolvers<Context> = {
 
         return redisResponse
       } else {
-        const comments = (await Comment.find({ where: { postId: self.id } })) as any[]
-
+        // const comments = (await Comment.find({ where: { postId: self.id } })) as any[]
+        const comments = await Comment
+          .createQueryBuilder("comment")
+          .where("comment.postId = :id", { id: self.id })
+          .getMany()
         if (comments.length != 0) {
           const redisComments = comments.map(comment => JSON.stringify(comment))
 
@@ -347,13 +296,15 @@ export const graphqlRoot: Resolvers<Context> = {
 
   PostCommit: {
     user: async (self, _, ctx) => {
-      return getUser(ctx.redis, self.userId)
+      const user = await getUser(ctx.redis, self.userId)
+      return user
     },
   },
 
   Comment: {
     user: async (self, _, ctx) => {
-      return getUser(ctx.redis, self.userId)
+      const user = await getUser(ctx.redis, self.userId)
+      return user
     },
   },
 
@@ -368,8 +319,11 @@ export const graphqlRoot: Resolvers<Context> = {
 
         return redisResponse
       } else {
-        const commits = (await PostCommit.find({ where: { postId: self.id } })) as any[]
-
+        // const commits = (await PostCommit.find({ where: { userId: self.id } })) as any[]
+        const commits = await PostCommit
+          .createQueryBuilder("commit")
+          .where("commit.userId = :id", { id: self.id })
+          .getMany()
         if (commits.length != 0) {
           const redisCommits = commits.map(commit => JSON.stringify(commit))
 
