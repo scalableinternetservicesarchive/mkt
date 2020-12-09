@@ -67,25 +67,25 @@ export const graphqlRoot: Resolvers<Context> = {
         // let sort = new Map()
 
         // for some reason orderBy didn't like being given a declared map object?
-        const sortKey_param = sortKey != null
-          ? sortKey : "post.timeUpdated"
-        const sortDir_param = sortDir != null
-          ? sortDir ? "ASC" : "DESC"
-          : "DESC"
+        // const sortKey_param = sortKey != null
+        //   ? sortKey : "post.timeUpdated"
+        // const sortDir_param = sortDir != null
+        //   ? sortDir ? "ASC" : "DESC"
+        //   : "DESC"
         // const sort =
         // {
         //   "post.timeUpdated": "ASC"
         // }
-        const filter =
-          filterOptions != null
-            ? `post.ownerId = ${filterOptions.userId}`
-            : '1=1'
+        // const filter =
+        //   filterOptions != null
+        //     ? `post.ownerId = ${filterOptions.userId}`
+        //     : '1=1'
         const posts = await getConnection()
           .createQueryBuilder()
-          .orderBy(sortKey_param, sortDir_param)
+          // .orderBy(sortKey_param, sortDir_param)
           .select("post")
           .from(Post, "post")
-          .where(filter)
+          // .where(filter)
           .skip(skip)
           .limit(num)
           .getMany()
