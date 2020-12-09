@@ -27,8 +27,8 @@ async function getUser(redis: Redis, id: number) {
     return JSON.parse(redisResponse as string) as any
   } else {
     const user = await getRepository(User)
-      .createQueryBuilder("user")
-      .where("user.id = :id_par", { id_par: id })
+      .createQueryBuilder('user')
+      .where('user.id = :id_par', { id_par: id })
       .getOne()
     // const user = await User.findOne({ where: { id: id } })
     void redis.set(key, JSON.stringify(user), 'EX', 60)
@@ -38,16 +38,14 @@ async function getUser(redis: Redis, id: number) {
 
 async function getPost(redis: Redis, id: number) {
   const key = `post${id}`
+  await redis.del(key)
   const exists = await redis.exists(key)
 
   if (exists) {
     const redisResponse = await redis.get(key)
     return JSON.parse(redisResponse as string) as any
   } else {
-    const post = await Post
-      .createQueryBuilder("post")
-      .where("post.id = :id_par", { id_par: id })
-      .getOne()
+    const post = await Post.createQueryBuilder('post').where('post.id = :id_par', { id_par: id }).getOne()
     void redis.set(key, JSON.stringify(post), 'EX', 60)
     return post
   }
@@ -83,11 +81,8 @@ export const graphqlRoot: Resolvers<Context> = {
         const redisResponse = await ctx.redis.get('numPosts')
         return parseInt(redisResponse as string)
       } else {
-        const query = await Post
-          .createQueryBuilder("post")
-          .select("COUNT(*)", "count")
-          .getRawOne()
-        const count = parseInt(query["count"])
+        const query = await Post.createQueryBuilder('post').select('COUNT(*)', 'count').getRawOne()
+        const count = parseInt(query['count'])
         console.log(count)
         void ctx.redis.set('numPosts', count, 'EX', 60)
         return count
@@ -125,11 +120,10 @@ export const graphqlRoot: Resolvers<Context> = {
       //   filterOptions != null
       //     ? `post.ownerId = ${filterOptions.userId}`
       //     : '1=1'
-      const posts = await Post
-        .createQueryBuilder()
+      const posts = await Post.createQueryBuilder()
         // .orderBy(sortKey_param, sortDir_param)
-        .select("post")
-        .from(Post, "post")
+        .select('post')
+        .from(Post, 'post')
         // .where(filter)
         .skip(skip)
         .limit(num)
@@ -157,6 +151,7 @@ export const graphqlRoot: Resolvers<Context> = {
       }
       post.description = description
       post.goal = goal
+      post.fulfilled = 0
       post.merchant = merchant
       post.commits = []
       post.comments = []
@@ -220,6 +215,7 @@ export const graphqlRoot: Resolvers<Context> = {
         `INSERT INTO \`post_commit\` (\`amount\`, \`itemUrl\`, \`postId\`, \`userId\`) VALUES (${amount}, '${itemUrl}', ${postId}, ${userId})`
       )
       void ctx.redis.lpush(`post${postId}-commits`, JSON.stringify(commit))
+      await query(`UPDATE \`post\` SET fulfilled = ${post.goal + amount} WHERE id = post.id`)
       // commit.user = await getUser(ctx.redis, userId)
       // commit.post = await getPost(ctx.redis, postId)
       // commit.user = await User.findOneOrFail({ where: { id: userId } })
@@ -257,9 +253,8 @@ export const graphqlRoot: Resolvers<Context> = {
         return redisResponse
       } else {
         // const commits = (await PostCommit.find({ where: { postId: (self as any).id } })) as any[]
-        const commits = await PostCommit
-          .createQueryBuilder("commit")
-          .where("commit.postId = :id", { id: self.id })
+        const commits = await PostCommit.createQueryBuilder('commit')
+          .where('commit.postId = :id', { id: self.id })
           .getMany()
         if (commits.length != 0) {
           const redisCommits = commits.map(commit => JSON.stringify(commit))
@@ -281,9 +276,8 @@ export const graphqlRoot: Resolvers<Context> = {
         return redisResponse
       } else {
         // const comments = (await Comment.find({ where: { postId: self.id } })) as any[]
-        const comments = await Comment
-          .createQueryBuilder("comment")
-          .where("comment.postId = :id", { id: self.id })
+        const comments = await Comment.createQueryBuilder('comment')
+          .where('comment.postId = :id', { id: self.id })
           .getMany()
         if (comments.length != 0) {
           const redisComments = comments.map(comment => JSON.stringify(comment))
@@ -320,9 +314,8 @@ export const graphqlRoot: Resolvers<Context> = {
         return redisResponse
       } else {
         // const commits = (await PostCommit.find({ where: { userId: self.id } })) as any[]
-        const commits = await PostCommit
-          .createQueryBuilder("commit")
-          .where("commit.userId = :id", { id: self.id })
+        const commits = await PostCommit.createQueryBuilder('commit')
+          .where('commit.userId = :id', { id: self.id })
           .getMany()
         if (commits.length != 0) {
           const redisCommits = commits.map(commit => JSON.stringify(commit))

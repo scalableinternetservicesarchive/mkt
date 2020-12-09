@@ -95,6 +95,7 @@ export interface Post {
   picture?: Maybe<Scalars['String']>
   title: Scalars['String']
   description: Scalars['String']
+  fulfilled: Scalars['Int']
   goal: Scalars['Int']
   ownerId: Scalars['Int']
   owner: User
@@ -305,6 +306,7 @@ export type PostResolvers<
   picture?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  fulfilled?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   goal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   ownerId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   owner?: Resolver<ResolversTypes['User'], ParentType, ContextType>

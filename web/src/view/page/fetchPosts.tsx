@@ -7,6 +7,7 @@ export const FETCH_POSTS = gql`
       picture
       title
       description
+      fulfilled
       goal
       owner {
         name
@@ -37,6 +38,7 @@ export const FETCH_POST = gql`
       picture
       title
       description
+      fulfilled
       goal
       owner {
         id

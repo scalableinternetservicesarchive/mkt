@@ -13,7 +13,7 @@ import { AppRouteParams } from '../nav/route'
 import { FETCH_POSTS } from './fetchPosts'
 import { Page } from './Page'
 
-interface DashboardProps extends RouteComponentProps, AppRouteParams { }
+interface DashboardProps extends RouteComponentProps, AppRouteParams {}
 
 export function Dashboard({ navigate }: DashboardProps) {
   const [page, setPage] = React.useState(0)

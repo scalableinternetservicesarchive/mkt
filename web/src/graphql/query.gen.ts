@@ -85,6 +85,7 @@ export interface Posts_posts {
   picture: string | null;
   title: string;
   description: string;
+  fulfilled: number;
   goal: number;
   owner: Posts_posts_owner;
   commits: Posts_posts_commits[];
@@ -150,6 +151,7 @@ export interface Post_post {
   picture: string | null;
   title: string;
   description: string;
+  fulfilled: number;
   goal: number;
   owner: Post_post_owner;
   commits: Post_post_commits[];
@@ -254,6 +256,7 @@ export interface CreatePostInput {
   title: string;
   picture?: string | null;
   description: string;
+  fulfilled: number;
   goal: number;
   ownerId: number;
   merchant: string;

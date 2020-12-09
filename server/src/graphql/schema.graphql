@@ -71,6 +71,7 @@ type Post {
   picture: String
   title: String!
   description: String!
+  fulfilled: Int!
   goal: Int!
   ownerId: Int!
   owner: User!
