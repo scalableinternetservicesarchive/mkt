@@ -221,10 +221,17 @@ server.express.post(
   asyncRoute(async (req, res, next) => {
     const authToken = req.cookies.authToken || req.header('x-authtoken')
     if (authToken) {
-      const session = await Session.findOne({ where: { authToken }, relations: ['user'] })
-      if (session) {
+      const cachedUser = await redis.get(authToken)
+      if (cachedUser) {
         const reqAny = req as any
-        reqAny.user = session.user
+        reqAny.user = JSON.parse(cachedUser) as any
+      } else {
+        const session = await Session.findOne({ where: { authToken }, relations: ['user'] })
+        if (session) {
+          const reqAny = req as any
+          reqAny.user = session.user
+          void redis.set(authToken, JSON.stringify(session.user))
+        }
       }
     }
     next()

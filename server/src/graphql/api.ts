@@ -16,6 +16,34 @@ export function getSchema() {
   return schema.toString()
 }
 
+async function getUser(redis: Redis, id: number) {
+  const key = `user${id}`
+  const exists = await redis.exists(key)
+
+  if (exists) {
+    const redisResponse = await redis.get(key)
+    return JSON.parse(redisResponse as string) as any
+  } else {
+    const user = await User.findOne({ where: { id: id } })
+    void redis.set(key, JSON.stringify(user), 'EX', 60)
+    return user
+  }
+}
+
+async function getPost(redis: Redis, id: number) {
+  const key = `post${id}`
+  const exists = await redis.exists(key)
+
+  if (exists) {
+    const redisResponse = await redis.get(key)
+    return JSON.parse(redisResponse as string) as any
+  } else {
+    const post = await Post.findOne({ where: { id: id } })
+    void redis.set(key, JSON.stringify(post), 'EX', 60)
+    return post
+  }
+}
+
 interface Context {
   user: User | null
   request: Request
@@ -29,53 +57,54 @@ export const graphqlRoot: Resolvers<Context> = {
     self: (_, args, ctx) => ctx.user,
     // post: async (_, { postId }) => (await Post.findOne({ where: { id: postId } })) || null,
     post: async (_, { postId }, ctx) => {
+      return getPost(ctx.redis, postId)
       // (await ctx.postLoader.load(postId)) || null,
-      const exists = await ctx.redis.exists('post' + postId)
-      if (exists) {
-        const redisResponse = await ctx.redis.get('post' + postId)
-        return JSON.parse(redisResponse as string)
-      } else {
-        const post = (await Post.findOne({ where: { id: postId } })) || null
-        void ctx.redis.set('post' + postId, JSON.stringify(post), 'EX', 60)
-        return post
-      }
+      // const exists = await ctx.redis.exists('post' + postId)
+      // if (exists) {
+      //   const redisResponse = await ctx.redis.get('post' + postId)
+      //   return JSON.parse(redisResponse as string)
+      // } else {
+      //   const post = (await Post.findOne({ where: { id: postId } })) || null
+      //   void ctx.redis.set('post' + postId, JSON.stringify(post), 'EX', 60)
+      //   return post
+      // }
     },
     posts: async (_, { num, skip, sortOptions, filterOptions }, ctx) => {
       const page = skip / 10
 
-      const exists = await ctx.redis.exists('page' + page)
+      // const exists = await ctx.redis.exists('page' + page)
 
-      if (exists) {
-        const redisResponse = (await ctx.redis.lrange('page' + page, 0, -1)).map(elem => JSON.parse(elem))
+      // if (exists) {
+      //   const redisResponse = (await ctx.redis.lrange('page' + page, 0, -1)).map(elem => JSON.parse(elem))
 
-        return redisResponse
-      } else {
-        const sort =
-          sortOptions != null
-            ? {
-                order: {
-                  [sortOptions.field]: sortOptions?.ascending ? 'ASC' : 'DESC',
-                },
-              }
-            : undefined
-        const filter =
-          filterOptions != null
-            ? {
-                where: {
-                  ownerId: filterOptions.userId,
-                },
-              }
-            : undefined
-        const posts = await Post.find({ take: num, skip: skip, ...sort, ...filter })
+      //   return redisResponse
+      // } else {
+      const sort =
+        sortOptions != null
+          ? {
+              order: {
+                [sortOptions.field]: sortOptions?.ascending ? 'ASC' : 'DESC',
+              },
+            }
+          : undefined
+      const filter =
+        filterOptions != null
+          ? {
+              where: {
+                ownerId: filterOptions.userId,
+              },
+            }
+          : undefined
+      const posts = await Post.find({ take: num, skip: skip, ...sort, ...filter })
 
-        if (posts.length != 0) {
-          const redisPage = posts.map(post => JSON.stringify(post))
+      if (posts.length != 0) {
+        const redisPage = posts.map(post => JSON.stringify(post))
 
-          void ctx.redis.lpush('page' + page, redisPage)
-        }
-
-        return posts
+        void ctx.redis.lpush('page' + page, redisPage)
       }
+
+      return posts
+      // }
     },
     numPosts: async (_, __, ctx) => {
       const exists = await ctx.redis.exists('numPosts')
@@ -130,13 +159,18 @@ export const graphqlRoot: Resolvers<Context> = {
       const commit = new PostCommit()
       commit.amount = amount
       commit.itemUrl = itemUrl
-      commit.user = await User.findOneOrFail({ where: { id: userId } })
-      commit.post = await Post.findOneOrFail({ where: { id: postId } })
+      const [user, post] = await Promise.all([getUser(ctx.redis, userId), getPost(ctx.redis, postId)])
+      commit.user = user
+      commit.post = post
       await query(
         `INSERT INTO \`post_commit\` (\`amount\`, \`itemUrl\`, \`postId\`, \`userId\`) VALUES (${amount}, '${itemUrl}', ${postId}, ${userId})`
       )
       void ctx.redis.lpush(`post${postId}-commits`, JSON.stringify(commit))
-      // await commit.save()
+      // commit.user = await getUser(ctx.redis, userId)
+      // commit.post = await getPost(ctx.redis, postId)
+      // commit.user = await User.findOneOrFail({ where: { id: userId } })
+      // commit.post = await Post.findOneOrFail({ where: { id: postId } })
+      // void ctx.redis.lpush('post' + postId + '-commits', JSON.stringify(commit))
       return true
     },
     comment: async (_self, { input }, ctx) => {
@@ -145,28 +179,22 @@ export const graphqlRoot: Resolvers<Context> = {
       comment.body = body
       comment.user = await User.findOneOrFail({ where: { id: userId } })
       comment.post = await Post.findOneOrFail({ where: { id: postId } })
-      // await comment.save()
+      const [user, post] = await Promise.all([getUser(ctx.redis, userId), getPost(ctx.redis, postId)])
+      comment.user = user
+      comment.post = post
       await query(`INSERT INTO \`comment\`(\`body\`, \`postId\`, \`userId\`) VALUES ('${body}', ${postId}, ${userId})`)
       void ctx.redis.lpush(`post${postId}-comments`, JSON.stringify(comment))
+      // comment.user = await getUser(ctx.redis, userId)
+      // comment.post = await getPost(ctx.redis, postId)
+      // comment.user = await User.findOneOrFail({ where: { id: userId } })
+      // comment.post = await Post.findOneOrFail({ where: { id: postId } })
       return true
     },
   },
 
   Post: {
     owner: async (self, _, ctx) => {
-      // return User.findOne({ where: { id: (self as any).ownerId } }) as any
-      const exists = await ctx.redis.exists('user' + self.ownerId)
-
-      if (exists) {
-        const redisResponse = await ctx.redis.get('user' + self.ownerId)
-
-        return JSON.parse(redisResponse as string) as any
-      } else {
-        const user = await User.findOne({ where: { id: (self as any).ownerId } })
-        void ctx.redis.set('user' + self.ownerId, JSON.stringify(user), 'EX', 60)
-
-        return user as any
-      }
+      return getUser(ctx.redis, self.ownerId)
     },
     commits: async (self, _, ctx) => {
       const exists = false //await ctx.redis.exists('post' + self.id + '-commits')
@@ -174,7 +202,6 @@ export const graphqlRoot: Resolvers<Context> = {
         const redisResponse = (await ctx.redis.lrange('post' + self.id + '-commits', 0, -1)).map(elem =>
           JSON.parse(elem)
         )
-
         return redisResponse
       } else {
         const commits = (await PostCommit.find({ where: { postId: (self as any).id } })) as any[]
@@ -213,37 +240,13 @@ export const graphqlRoot: Resolvers<Context> = {
 
   PostCommit: {
     user: async (self, _, ctx) => {
-      // return User.findOne({ where: { id: (self as any).userId } }) as any
-      const exists = await ctx.redis.exists('user' + self.userId)
-
-      if (exists) {
-        const redisResponse = await ctx.redis.get('user' + self.userId)
-
-        return JSON.parse(redisResponse as string) as any
-      } else {
-        const user = await User.findOne({ where: { id: self.userId } })
-        void ctx.redis.set('user' + self.userId, JSON.stringify(user), 'EX', 60)
-
-        return user as any
-      }
+      return getUser(ctx.redis, self.userId)
     },
   },
 
   Comment: {
     user: async (self, _, ctx) => {
-      // return User.findOne({ where: { id: (self as any).userId } }) as any
-      const exists = await ctx.redis.exists('user' + self.userId)
-
-      if (exists) {
-        const redisResponse = await ctx.redis.get('user' + self.userId)
-
-        return JSON.parse(redisResponse as string) as any
-      } else {
-        const user = await User.findOne({ where: { id: self.userId } })
-        void ctx.redis.set('user' + self.userId, JSON.stringify(user), 'EX', 60)
-
-        return user as any
-      }
+      return getUser(ctx.redis, self.userId)
     },
   },
 
