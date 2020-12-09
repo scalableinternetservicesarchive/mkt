@@ -31,7 +31,7 @@ export const options = {
 }
 
 export default function () {
-  const probabilityToPost = 0.0
+  const probabilityToPost = 0.05
   const probabilityToCommit = 0.3
   const score = Math.random()
 

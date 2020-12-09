@@ -2,7 +2,7 @@ import { readFileSync } from 'fs'
 import { PubSub } from 'graphql-yoga'
 import { Redis } from 'ioredis'
 import path from 'path'
-import { getRepository } from 'typeorm'
+import { getConnection, getRepository } from 'typeorm'
 import { query } from '../db/sql'
 import { Comment } from '../entities/Comment'
 import { Post } from '../entities/Post'
@@ -107,26 +107,27 @@ export const graphqlRoot: Resolvers<Context> = {
       // let sort = new Map()
 
       // for some reason orderBy didn't like being given a declared map object?
-      // const sortKey_param = sortKey != null
-      //   ? sortKey : "post.timeUpdated"
-      // const sortDir_param = sortDir != null
-      //   ? sortDir ? "ASC" : "DESC"
-      //   : "DESC"
+      const sortKey_param = sortKey != null
+        ? sortKey : "post.timeUpdated"
+      const sortDir_param = sortDir != null
+        ? sortDir ? "ASC" : "DESC"
+        : "DESC"
       // const sort =
       // {
       //   "post.timeUpdated": "ASC"
       // }
-      // const filter =
-      //   filterOptions != null
-      //     ? `post.ownerId = ${filterOptions.userId}`
-      //     : '1=1'
-      const posts = await Post.createQueryBuilder()
-        // .orderBy(sortKey_param, sortDir_param)
+      const filter =
+        filterOptions != null
+          ? `post.ownerId = ${filterOptions.userId}`
+          : '1=1'
+      const posts = await getConnection()
+        .createQueryBuilder()
         .select('post')
         .from(Post, 'post')
-        // .where(filter)
+        .where(filter)
+        .orderBy(sortKey_param, sortDir_param)
         .skip(skip)
-        .limit(num)
+        .take(num)
         .getMany()
       // const posts = await Post.find({ take: num, skip: skip, ...sort, ...filter })
 

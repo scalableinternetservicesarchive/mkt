@@ -55,30 +55,6 @@ export interface Posts_posts_owner {
   picture: string | null;
 }
 
-export interface Posts_posts_commits_user {
-  __typename: "User";
-  name: string;
-  picture: string | null;
-}
-
-export interface Posts_posts_commits {
-  __typename: "PostCommit";
-  amount: number;
-  user: Posts_posts_commits_user;
-}
-
-export interface Posts_posts_comments_user {
-  __typename: "User";
-  name: string;
-  picture: string | null;
-}
-
-export interface Posts_posts_comments {
-  __typename: "Comment";
-  body: string;
-  user: Posts_posts_comments_user;
-}
-
 export interface Posts_posts {
   __typename: "Post";
   id: number;
@@ -88,8 +64,6 @@ export interface Posts_posts {
   fulfilled: number;
   goal: number;
   owner: Posts_posts_owner;
-  commits: Posts_posts_commits[];
-  comments: Posts_posts_comments[];
 }
 
 export interface Posts {
@@ -256,7 +230,6 @@ export interface CreatePostInput {
   title: string;
   picture?: string | null;
   description: string;
-  fulfilled: number;
   goal: number;
   ownerId: number;
   merchant: string;
