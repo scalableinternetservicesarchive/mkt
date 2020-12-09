@@ -179,7 +179,10 @@ export const graphqlRoot: Resolvers<Context> = {
       await query(
         `INSERT INTO \`post_commit\` (\`amount\`, \`itemUrl\`, \`postId\`, \`userId\`) VALUES (${amount}, '${itemUrl}', ${postId}, ${userId})`
       )
-      await query(`UPDATE \`post\` SET fulfilled = ${post.fulfilled + amount} WHERE id = ${post.id}`)
+
+      const post_fullfilled = (await query(`SELECT fulfilled FROM post WHERE id = ${postId}`))[0].fulfilled
+
+      await query(`UPDATE \`post\` SET fulfilled = ${post_fullfilled + amount} WHERE id = ${postId}`)
       // Cache invalidation
       void ctx.redis.del(`post${postId}-commits`)
       return true
