@@ -16,7 +16,7 @@ interface Props {
 interface NewPostProps extends RouteComponentProps, AppRouteParams {}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function NewPost(_: NewPostProps & Props) {
+export function NewPost({ navigate }: NewPostProps & Props) {
   const { user } = React.useContext(UserContext)
   const [createPost] = useMutation<CreatePost>(CREATE_POST)
   const [title, setTitle] = React.useState('')
@@ -24,8 +24,6 @@ export function NewPost(_: NewPostProps & Props) {
   const [merchant, setMerchant] = React.useState('')
   const [goal, setGoal] = React.useState('')
   const [file, setFile] = React.useState<string | null>(null)
-
-  if (file) console.log(file)
 
   return (
     <Page>
@@ -92,6 +90,7 @@ export function NewPost(_: NewPostProps & Props) {
               setDescription('')
               setGoal('')
               setMerchant('')
+              if (navigate) void navigate('/app/')
             }}
           >
             Create order
