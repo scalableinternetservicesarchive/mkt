@@ -69,12 +69,21 @@ export class Post extends BaseEntity implements GraphqlPost {
   @Column()
   ownerId: number
 
-  @ManyToOne(() => User, user => user.posts)
+  @ManyToOne(() => User, user => user.posts, {
+    cascade: false,
+    lazy: true
+  })
   owner: User
 
-  @OneToMany(() => PostCommit, commit => commit.post)
+  @OneToMany(() => PostCommit, commit => commit.post, {
+    cascade: false,
+    lazy: true
+  })
   commits: PostCommit[]
 
-  @OneToMany(() => Comment, comment => comment.post)
+  @OneToMany(() => Comment, comment => comment.post, {
+    cascade: false,
+    lazy: true
+  })
   comments: Comment[]
 }

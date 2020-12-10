@@ -36,6 +36,7 @@ export class PostCommit extends BaseEntity {
 
   @ManyToOne(() => Post, post => post.commits, {
     cascade: false,
+    lazy: true
   })
   post: Post
 
@@ -44,6 +45,7 @@ export class PostCommit extends BaseEntity {
 
   @ManyToOne(() => User, user => user.commits, {
     cascade: false,
+    lazy: true
   })
   user: User
 }
