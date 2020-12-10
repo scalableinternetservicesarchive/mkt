@@ -53,12 +53,21 @@ export class User extends BaseEntity implements GraphqlUser {
   })
   userType: UserType
 
-  @OneToMany(() => Post, post => post.owner)
+  @OneToMany(() => Post, post => post.owner, {
+    cascade: false,
+    lazy: true
+  })
   posts: Post[]
 
-  @OneToMany(() => PostCommit, commit => commit.user)
+  @OneToMany(() => PostCommit, commit => commit.user, {
+    cascade: false,
+    lazy: true
+  })
   commits: PostCommit[]
 
-  @OneToMany(() => Comment, comment => comment.user)
+  @OneToMany(() => Comment, comment => comment.user, {
+    cascade: false,
+    lazy: true
+  })
   comments: Comment[]
 }
