@@ -5,7 +5,7 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm'
 import { Post } from './Post'
 import { User } from './User'
@@ -35,7 +35,7 @@ export class PostCommit extends BaseEntity {
   postId: number
 
   @ManyToOne(() => Post, post => post.commits, {
-    cascade: true,
+    cascade: false,
   })
   post: Post
 
@@ -43,7 +43,7 @@ export class PostCommit extends BaseEntity {
   userId: number
 
   @ManyToOne(() => User, user => user.commits, {
-    cascade: true,
+    cascade: false,
   })
   user: User
 }
