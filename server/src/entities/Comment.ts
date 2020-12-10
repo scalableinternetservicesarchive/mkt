@@ -30,7 +30,7 @@ export class Comment extends BaseEntity {
   postId: number
 
   @ManyToOne(() => Post, post => post.commits, {
-    cascade: true,
+    cascade: false,
   })
   post: Post
 
@@ -38,7 +38,7 @@ export class Comment extends BaseEntity {
   userId: number
 
   @ManyToOne(() => User, user => user.commits, {
-    cascade: true,
+    cascade: false,
   })
   user: User
 }
